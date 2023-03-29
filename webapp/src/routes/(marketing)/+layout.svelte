@@ -3,11 +3,10 @@
 </script>
 
 <svelte:head>
-  <base href="{PUBLIC_BASE_URL}" />
+  <base href={PUBLIC_BASE_URL} />
 </svelte:head>
 
-<header>
-</header>
+<header />
 
 <main>
   <slot />
@@ -15,10 +14,6 @@
 
 <footer>
   &copy; Bale 2023
-  <a href="terms">
-    Terms of Service
-  </a>
-  <a href="privacy">
-    Privacy Policy
-  </a>
+  <a href="terms">Terms of Service</a>
+  <a href="privacy">Privacy Policy</a>
 </footer>
