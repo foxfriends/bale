@@ -20,6 +20,11 @@ config :bale, BaleWeb.Endpoint,
   pubsub_server: Bale.PubSub,
   live_view: [signing_salt: "HVp/Xwqu"]
 
+config :bale, :generators,
+  migration: true,
+  binary_id: true,
+  sample_binary_id: "11111111-1111-1111-1111-111111111111"
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
