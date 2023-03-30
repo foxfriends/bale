@@ -7,6 +7,9 @@ defmodule BaleWeb.Router do
 
   scope "/api", BaleWeb do
     pipe_through :api
+
+    post "/auth/new", AuthController, :sign_up
+    post "/auth", AuthController, :sign_in
   end
 
   # Enable LiveDashboard in development

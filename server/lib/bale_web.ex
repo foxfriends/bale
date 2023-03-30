@@ -37,9 +37,9 @@ defmodule BaleWeb do
 
   def controller do
     quote do
-      use Phoenix.Controller,
-        formats: [:html, :json],
-        layouts: [html: BaleWeb.Layouts]
+      use Phoenix.Controller, formats: [:json]
+
+      action_fallback BaleWeb.FallbackController
 
       import Plug.Conn
 

@@ -20,6 +20,8 @@ config :bale, BaleWeb.Endpoint,
   pubsub_server: Bale.PubSub,
   live_view: [signing_salt: "HVp/Xwqu"]
 
+config :bale, Bale.Account.Auth, verify_emails: true
+
 config :bale, :generators,
   migration: true,
   binary_id: true,

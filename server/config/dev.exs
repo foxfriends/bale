@@ -24,6 +24,8 @@ config :bale, BaleWeb.Endpoint,
   secret_key_base: "BFraHxWONWZfQw/VURDvnwrr7zYZEtbOwRLvhrL2vjds4JlGZE2f/qOUEOYTHwQt",
   watchers: []
 
+config :bale, Bale.Account.Auth, verify_emails: false
+
 # ## SSL Support
 #
 # In order to use HTTPS in development, a self-signed
