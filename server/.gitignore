@@ -27,3 +27,4 @@ bale-*.tar
 
 /priv/plts/*.plt
 /priv/plts/*.plt.hash
+.elixir_ls
