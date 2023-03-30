@@ -11,14 +11,10 @@ defmodule BaleWeb.AuthController do
   end
 
   def sign_in(conn, %{"username" => username, "password" => password}) do
-    case Auth.authenticate(%{username: username, password: password}) do
-      {:ok, id} ->
-        conn
-        |> put_status(200)
-        |> json(%{id: id})
-
-      :unauthorized ->
-        {:error, :unauthorized}
+    with {:ok, id} <- Auth.authenticate(%{username: username, password: password}) do
+      conn
+      |> put_status(200)
+      |> json(%{id: id})
     end
   end
 end

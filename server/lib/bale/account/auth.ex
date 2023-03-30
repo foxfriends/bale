@@ -42,7 +42,7 @@ defmodule Bale.Account.Auth do
   end
 
   @spec authenticate(%{username: String.t(), password: String.t()}) ::
-          {:ok, Ecto.UUID.t()} | :unauthorized
+          {:ok, Ecto.UUID.t()} | {:error, :unauthorized}
   def authenticate(%{
         username: username,
         password: password_plaintext
@@ -64,10 +64,10 @@ defmodule Bale.Account.Auth do
     else
       _ ->
         Bcrypt.no_user_verify()
-        :unauthorized
+        {:error, :unauthorized}
 
       false ->
-        :unauthorized
+        {:error, :unauthorized}
     end
   end
 end
