@@ -22,6 +22,10 @@ config :bale, BaleWeb.Endpoint,
 
 config :bale, Bale.Account.Auth, verify_emails: true
 
+config :bale, BaleWeb.IdentityToken,
+  issuer: "https://bale.cameldridge.com",
+  audience: "https://bale.cameldridge.com"
+
 config :bale, :generators,
   migration: true,
   binary_id: true,

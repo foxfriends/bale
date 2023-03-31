@@ -26,6 +26,12 @@ config :bale, BaleWeb.Endpoint,
 
 config :bale, Bale.Account.Auth, verify_emails: false
 
+config :joken,
+  default_signer: [
+    signer_alg: "RS256",
+    key_pem: File.read!("priv/dev/jwt-rs256.key")
+  ]
+
 # ## SSL Support
 #
 # In order to use HTTPS in development, a self-signed

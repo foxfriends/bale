@@ -10,11 +10,13 @@ defmodule BaleWeb.AuthController do
     end
   end
 
-  def sign_in(conn, %{"username" => username, "password" => password}) do
+  def identify(conn, %{"username" => username, "password" => password}) do
+    # NOTE: this is generating identity tokens, not authorization tokens... but we're
+    # just going to run with that for a while. proper authorization can come later.
     with {:ok, id} <- Auth.authenticate(%{username: username, password: password}) do
-      conn
-      |> put_status(200)
-      |> json(%{id: id})
+      {:ok, token, _claims} = BaleWeb.IdentityToken.generate_and_sign(%{"sub" => id})
+
+      text(conn, token)
     end
   end
 end

@@ -48,7 +48,7 @@ defmodule Bale.Account.Auth do
         password: password_plaintext
       }) do
     with(
-      {:ok, result} <-
+      [id, password_hash] <-
         Repo.one(
           from(a in Account,
             join: p in assoc(a, :passwords),
@@ -58,9 +58,9 @@ defmodule Bale.Account.Auth do
             select: [a.id, p.password]
           )
         ),
-      true <- Bcrypt.verify_pass(password_plaintext, result.password)
+      true <- Bcrypt.verify_pass(password_plaintext, password_hash)
     ) do
-      {:ok, result.id}
+      {:ok, id}
     else
       _ ->
         Bcrypt.no_user_verify()
