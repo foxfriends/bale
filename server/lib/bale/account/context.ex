@@ -1,10 +1,8 @@
-defmodule Bale.Account.Auth do
+defmodule Bale.Account do
   @moduledoc """
-  Manages tasks related to authentication:
+  Manages tasks related to accounts and authentication:
   * Creation of accounts and logins
   * Validation of logins
-
-  This auth is for authentication, not authorization.
   """
 
   import Ecto.Query
@@ -15,9 +13,9 @@ defmodule Bale.Account.Auth do
     Application.fetch_env!(:bale, __MODULE__) |> Keyword.fetch!(key)
   end
 
-  @spec create_account(%{username: String.t(), email: String.t(), password: String.t()}) ::
+  @spec create(%{username: String.t(), email: String.t(), password: String.t()}) ::
           {:ok, Ecto.UUID.t()}
-  def create_account(%{
+  def create(%{
         username: username,
         email: email_address,
         password: password_plaintext

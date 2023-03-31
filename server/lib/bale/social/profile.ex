@@ -11,16 +11,20 @@ defmodule Bale.Social.Profile do
   @foreign_key_type :binary_id
   schema "profiles" do
     field :name, :string
-
-    timestamps()
+    field :status, :string
+    field :photo, :string
+    field :bio, :string
 
     belongs_to :account, Bale.Account.Account
+    belongs_to :avatar, Bale.Social.Avatar
+
+    timestamps()
   end
 
   @doc false
   def changeset(profile, attrs) do
     profile
-    |> cast(attrs, [:name])
-    |> validate_required([:name])
+    |> cast(attrs, [:name, :account_id, :status, :photo, :bio, :avatar_id])
+    |> validate_required([:name, :account_id])
   end
 end
