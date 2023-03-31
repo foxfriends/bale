@@ -1,4 +1,8 @@
 defmodule BaleWeb.Telemetry do
+  @moduledoc """
+  From Phoenix. Don't touch. Doc here just to shut up Credo.
+  """
+
   use Supervisor
   import Telemetry.Metrics
 

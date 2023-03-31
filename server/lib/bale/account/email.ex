@@ -1,4 +1,10 @@
 defmodule Bale.Account.Email do
+  @moduledoc """
+  Schema for email addresses attached to accounts. Login is performed
+  by username, the emails are just here for contact, marketing, and
+  security purposes.
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
   alias Bale.Repo

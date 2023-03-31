@@ -1,4 +1,11 @@
 defmodule BaleWeb.IdentityToken do
+  @moduledoc """
+  JWT generation for use as identity tokens.
+
+  I know this isn't really sufficient for proper safe authorization, but
+  until I have time, identification is enough for authorization as well.
+  """
+
   use Joken.Config
 
   defp get_env(key) do

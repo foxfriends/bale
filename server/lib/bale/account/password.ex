@@ -1,4 +1,13 @@
 defmodule Bale.Account.Password do
+  @moduledoc """
+  Schema for passwords associated with accounts. An account's name
+  and its most recent password are used for login. Old passwords
+  are not deleted automatically, but we may prune them if they are
+  not needed.
+
+  Passwords must be hashed with bcrypt before storing.
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
   alias Bale.Repo

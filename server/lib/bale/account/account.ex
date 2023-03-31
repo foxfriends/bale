@@ -1,4 +1,12 @@
 defmodule Bale.Account.Account do
+  @moduledoc """
+  Schema for accounts.
+
+  Contrary to many apps you might find, Bale differentiates between
+  accounts, logins, and profiles. An account (as here) is just an
+  identifier.
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
   alias Bale.Repo
@@ -12,6 +20,7 @@ defmodule Bale.Account.Account do
 
     has_many :passwords, Bale.Account.Password
     has_many :emails, Bale.Account.Email
+    has_one :profile, Bale.Social.Profile
   end
 
   @doc false

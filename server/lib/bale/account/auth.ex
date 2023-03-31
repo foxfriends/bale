@@ -1,6 +1,13 @@
 defmodule Bale.Account.Auth do
-  import Ecto.Query
+  @moduledoc """
+  Manages tasks related to authentication:
+  * Creation of accounts and logins
+  * Validation of logins
 
+  This auth is for authentication, not authorization.
+  """
+
+  import Ecto.Query
   alias Bale.Repo
   alias Bale.Account.{Account, Email, Password}
 

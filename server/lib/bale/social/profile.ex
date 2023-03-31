@@ -1,4 +1,9 @@
 defmodule Bale.Social.Profile do
+  @moduledoc """
+  Schema for profiles, which are distinct from accounts. In fact,
+  an account may have no profile, that is ok.
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -6,9 +11,10 @@ defmodule Bale.Social.Profile do
   @foreign_key_type :binary_id
   schema "profiles" do
     field :name, :string
-    field :account_id, :binary_id
 
     timestamps()
+
+    belongs_to :account, Bale.Account.Account
   end
 
   @doc false
