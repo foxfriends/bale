@@ -2,7 +2,7 @@ defmodule Bale.Account.Auth do
   import Ecto.Query
 
   alias Bale.Repo
-  alias Bale.Account.{Account, Password, Email}
+  alias Bale.Account.{Account, Email, Password}
 
   defp get_env(key) do
     Application.fetch_env!(:bale, __MODULE__) |> Keyword.fetch!(key)
