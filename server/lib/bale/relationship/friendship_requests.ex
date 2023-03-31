@@ -1,4 +1,4 @@
-defmodule Bale.Social.FriendshipRequests do
+defmodule Bale.Relationship.FriendshipRequests do
   @moduledoc """
   Schema to represent a request for friendship between two accounts.
 

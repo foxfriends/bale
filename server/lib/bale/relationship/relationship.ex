@@ -1,4 +1,4 @@
-defmodule Bale.Social.Relationship do
+defmodule Bale.Relationship.Relationship do
   @moduledoc """
   Schema to represent a relationship between two accounts. A relationship
   is one-directional, but friendships can be established by sending a
