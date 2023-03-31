@@ -70,7 +70,7 @@ jobs:
       run: mix format --check-formatted
 
   lint:
-    name: lint
+    name: Lint
     runs-on: ubuntu-latest
     defaults:
       run:
