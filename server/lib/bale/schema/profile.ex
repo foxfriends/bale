@@ -27,6 +27,7 @@ defmodule Bale.Schema.Profile do
     field :bio, :string
 
     belongs_to :account, Bale.Schema.Account
+    belongs_to :image, Bale.Schema.Image
 
     timestamps()
   end
