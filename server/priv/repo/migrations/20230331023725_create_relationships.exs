@@ -3,13 +3,14 @@ defmodule Bale.Repo.Migrations.CreateRelationships do
 
   def change do
     execute(
-      "CREATE TYPE enum_relationship_level AS ENUM('following', 'friend', 'blocked')",
+      "CREATE TYPE enum_relationship_level AS ENUM('neutral', 'friend', 'best_friend', 'blocked')",
       "DROP TYPE enum_relationship_level"
     )
 
     create table(:relationships, primary_key: false) do
       add :id, :binary_id, primary_key: true, default: fragment("uuid_generate_v4()")
-      add :level, :enum_relationship_level, null: false
+      add :level, :enum_relationship_level, null: false, default: "neutral"
+      add :is_following, :boolean, null: false, default: true
 
       add :account_id,
           references(:accounts, on_delete: :delete_all, on_update: :update_all, type: :binary_id),

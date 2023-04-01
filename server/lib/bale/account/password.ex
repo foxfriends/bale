@@ -12,6 +12,15 @@ defmodule Bale.Account.Password do
   import Ecto.Changeset
   alias Bale.Repo
 
+  @type t() :: %__MODULE__{
+          __meta__: Ecto.Schema.Metadata.t(),
+          id: Ecto.UUID.t(),
+          password: String.t(),
+          account_id: Ecto.UUID.t(),
+          inserted_at: NaiveDateTime.t(),
+          updated_at: NaiveDateTime.t()
+        }
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "passwords" do
@@ -29,6 +38,7 @@ defmodule Bale.Account.Password do
     |> validate_required([:password, :account_id])
   end
 
+  @spec create(map()) :: {:ok, t()} | {:error, Ecto.Changeset.t()}
   def create(attrs) do
     %__MODULE__{} |> changeset(attrs) |> Repo.insert()
   end

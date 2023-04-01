@@ -20,6 +20,14 @@ config :bale, BaleWeb.Endpoint,
   secret_key_base: "67lqy0F/GoR6NIPDK6ZewlUnEqG3LUGjQtITK+UR7uu39/vR3A2AJUOhYnrxWtSu",
   server: false
 
+config :bale, Bale.Account, verify_emails: false
+
+config :joken,
+  default_signer: [
+    signer_alg: "RS256",
+    key_pem: File.read!("priv/dev/jwt-rs256.key")
+  ]
+
 # Print only warnings and errors during test
 config :logger, level: :warning
 

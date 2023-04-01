@@ -5,11 +5,25 @@ defmodule BaleWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/api", BaleWeb do
-    pipe_through :api
+  pipeline :identity do
+    plug BaleWeb.Identity
+    plug BaleWeb.AtMe
+  end
 
-    post "/auth/new", AuthController, :sign_up
-    post "/auth", AuthController, :identify
+  scope "/api/auth", BaleWeb do
+    pipe_through :api
+    post "/new", AuthController, :sign_up
+    post "/", AuthController, :identify
+  end
+
+  scope "/api", BaleWeb do
+    pipe_through [:api, :identity]
+
+    scope "/relationships" do
+      get "/:account_id/:partner_id", RelationshipController, :get
+      put "/:account_id/:partner_id", RelationshipController, :update
+      patch "/:account_id/:partner_id", RelationshipController, :partial_update
+    end
   end
 
   # Enable LiveDashboard in development

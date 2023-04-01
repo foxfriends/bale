@@ -9,23 +9,51 @@ defmodule Bale.Relationship.Relationship do
   they block you.
   """
 
-  use Ecto.Schema
+  import Ecto.Query
   import Ecto.Changeset
+  use Ecto.Schema
+  alias Bale.Repo
+
+  @type level() :: :neutral | :friend | :best_friend | :blocked
+  @type t() :: %__MODULE__{
+          __meta__: Ecto.Schema.Metadata.t(),
+          id: Ecto.UUID.t(),
+          account_id: Ecto.UUID.t(),
+          partner_id: Ecto.UUID.t(),
+          level: level(),
+          is_following: boolean(),
+          inserted_at: NaiveDateTime.t(),
+          updated_at: NaiveDateTime.t()
+        }
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "relationships" do
-    field :level, Ecto.Enum, values: [:following, :friend, :blocked]
+    field :level, Ecto.Enum, values: [:neutral, :friend, :best_friend, :blocked]
+    field :is_following, :boolean
     belongs_to :account, Bale.Account.Account
     belongs_to :partner, Bale.Account.Account
 
     timestamps()
   end
 
-  @doc false
-  def changeset(relationship, attrs) do
+  def update_changeset(relationship, attrs) do
     relationship
-    |> cast(attrs, [:level, :account_id, :partner_id])
-    |> validate_required([:level, :account_id, :partner_id])
+    |> cast(attrs, [:level, :is_following, :account_id, :partner_id])
+    |> validate_required([:account_id, :partner_id])
+  end
+
+  def replace_changeset(relationship, attrs) do
+    relationship
+    |> cast(attrs, [:level, :is_following, :account_id, :partner_id])
+    |> validate_required([:level, :is_following, :account_id, :partner_id])
+  end
+
+  @spec delete(Ecto.UUID.t(), Ecto.UUID.t()) :: :ok
+  def delete(account_id, partner_id) do
+    from(r in __MODULE__,
+      where: r.account_id == ^account_id and r.partner_id == ^partner_id
+    )
+    |> Repo.delete_all()
   end
 end

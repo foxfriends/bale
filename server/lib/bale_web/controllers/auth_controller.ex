@@ -14,7 +14,7 @@ defmodule BaleWeb.AuthController do
     with {:ok, id} <- Account.authenticate(%{username: username, password: password}) do
       {:ok, token, _claims} = BaleWeb.IdentityToken.generate_and_sign(%{"sub" => id})
 
-      text(conn, token)
+      json(conn, %{identity_token: token})
     end
   end
 end

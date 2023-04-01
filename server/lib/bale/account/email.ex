@@ -9,6 +9,16 @@ defmodule Bale.Account.Email do
   import Ecto.Changeset
   alias Bale.Repo
 
+  @type t() :: %__MODULE__{
+          __meta__: Ecto.Schema.Metadata.t(),
+          id: Ecto.UUID.t(),
+          email: String.t(),
+          is_verified: boolean(),
+          account_id: Ecto.UUID.t(),
+          inserted_at: NaiveDateTime.t(),
+          updated_at: NaiveDateTime.t()
+        }
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "emails" do
@@ -28,6 +38,7 @@ defmodule Bale.Account.Email do
     |> unique_constraint(:email)
   end
 
+  @spec create(map()) :: {:ok, t()} | {:error, :conflict}
   def create(attrs) do
     # TODO: More accurate (and reusable) detection of unique constraint
     case %__MODULE__{} |> changeset(attrs) |> Repo.insert() do

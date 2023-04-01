@@ -11,6 +11,14 @@ defmodule Bale.Account.Account do
   import Ecto.Changeset
   alias Bale.Repo
 
+  @type t() :: %__MODULE__{
+          __meta__: Ecto.Schema.Metadata.t(),
+          id: Ecto.UUID.t(),
+          name: String.t(),
+          inserted_at: NaiveDateTime.t(),
+          updated_at: NaiveDateTime.t()
+        }
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "accounts" do
@@ -31,6 +39,7 @@ defmodule Bale.Account.Account do
     |> unique_constraint(:name)
   end
 
+  @spec create(map()) :: {:ok, t()} | {:error, :conflict}
   def create(attrs) do
     # TODO: More accurate (and reusable) detection of unique constraint
     case %__MODULE__{} |> changeset(attrs) |> Repo.insert() do
