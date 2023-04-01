@@ -9,6 +9,7 @@ defmodule Bale.Repo.Migrations.CreateEvents do
       add :location, :string, null: false, default: ""
       add :occurs_at, :naive_datetime, null: false
       add :is_public, :boolean, default: false, null: false
+      add :is_joinable, :boolean, default: false, null: false
 
       add :host_id,
           references(:accounts, on_delete: :delete_all, on_update: :update_all, type: :binary_id),
@@ -17,10 +18,14 @@ defmodule Bale.Repo.Migrations.CreateEvents do
       add :image_id,
           references(:images, on_delete: :delete_all, on_update: :update_all, type: :binary_id)
 
+      add :parent_id,
+          references(:events, on_delete: :delete_all, on_update: :update_all, type: :binary_id)
+
       timestamps(default: fragment("now()"))
     end
 
     create index(:events, [:host_id])
     create index(:events, [:image_id])
+    create index(:events, [:parent_id])
   end
 end

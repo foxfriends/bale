@@ -1,4 +1,4 @@
-defmodule Bale.Schema.Images do
+defmodule Bale.Schema.Image do
   @moduledoc """
   Schema for images. Images are stored in some sort of buckets
   under the keys maintained in this table. We can decide where

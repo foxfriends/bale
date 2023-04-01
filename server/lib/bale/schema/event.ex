@@ -25,11 +25,13 @@ defmodule Bale.Schema.Event do
   @foreign_key_type :binary_id
   schema "events" do
     field :description, :string
+    field :is_joinable, :boolean
     field :is_public, :boolean
     field :location, :string
     field :occurs_at, :naive_datetime
     field :title, :string
 
+    belongs_to :parent, __MODULE__
     belongs_to :host, Bale.Schema.Account
     belongs_to :image, Bale.Schema.Image
 
@@ -39,7 +41,24 @@ defmodule Bale.Schema.Event do
   @doc false
   def changeset(event, attrs) do
     event
-    |> cast(attrs, [:title, :description, :location, :occurs_at, :is_public, :host_id])
-    |> validate_required([:title, :description, :location, :occurs_at, :is_public, :host_id])
+    |> cast(attrs, [
+      :title,
+      :description,
+      :location,
+      :occurs_at,
+      :is_public,
+      :is_joinable,
+      :parent_id,
+      :host_id
+    ])
+    |> validate_required([
+      :title,
+      :description,
+      :location,
+      :occurs_at,
+      :is_public,
+      :is_joinable,
+      :host_id
+    ])
   end
 end
