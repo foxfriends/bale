@@ -35,5 +35,6 @@ defmodule Bale.Account.Email do
     |> cast(attrs, [:email, :account_id, :is_verified])
     |> validate_required([:email, :account_id])
     |> unique_constraint(:email)
+    |> foreign_key_constraint(:account_id)
   end
 end

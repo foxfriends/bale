@@ -35,5 +35,6 @@ defmodule Bale.Account.Password do
     password
     |> cast(attrs, [:password, :account_id])
     |> validate_required([:password, :account_id])
+    |> foreign_key_constraint(:account_id)
   end
 end

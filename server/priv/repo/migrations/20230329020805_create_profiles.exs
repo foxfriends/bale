@@ -13,6 +13,6 @@ defmodule Bale.Repo.Migrations.CreateProfiles do
       timestamps(default: fragment("now()"))
     end
 
-    create index(:profiles, [:account_id])
+    create unique_index(:profiles, [:account_id])
   end
 end

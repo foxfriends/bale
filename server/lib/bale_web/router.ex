@@ -19,10 +19,22 @@ defmodule BaleWeb.Router do
   scope "/api", BaleWeb do
     pipe_through [:api, :identity]
 
-    scope "/relationships" do
-      get "/:account_id/:partner_id", RelationshipController, :get
-      put "/:account_id/:partner_id", RelationshipController, :update
-      patch "/:account_id/:partner_id", RelationshipController, :partial_update
+    scope "/relationships/:account_id" do
+      get "/:partner_id", RelationshipController, :get
+      put "/:partner_id", RelationshipController, :update
+      patch "/:partner_id", RelationshipController, :partial_update
+    end
+
+    scope "/profiles" do
+      get "/:account_id/", ProfileController, :get
+      post "/", ProfileController, :create
+      patch "/:account_id", ProfileController, :partial_update
+    end
+
+    scope "/avatars" do
+      get "/:account_id/", AvatarController, :get
+      post "/", AvatarController, :create
+      patch "/:account_id", AvatarController, :partial_update
     end
   end
 

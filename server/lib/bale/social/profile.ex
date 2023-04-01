@@ -7,6 +7,17 @@ defmodule Bale.Social.Profile do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @type t() :: %__MODULE__{
+          __meta__: Ecto.Schema.Metadata.t(),
+          id: Ecto.UUID.t(),
+          account_id: Ecto.UUID.t(),
+          status: String.t(),
+          bio: String.t(),
+          photo: String.t() | nil,
+          inserted_at: NaiveDateTime.t(),
+          updated_at: NaiveDateTime.t()
+        }
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "profiles" do
@@ -16,7 +27,6 @@ defmodule Bale.Social.Profile do
     field :bio, :string
 
     belongs_to :account, Bale.Account.Account
-    belongs_to :avatar, Bale.Social.Avatar
 
     timestamps()
   end
@@ -24,7 +34,8 @@ defmodule Bale.Social.Profile do
   @doc false
   def changeset(profile, attrs) do
     profile
-    |> cast(attrs, [:name, :account_id, :status, :photo, :bio, :avatar_id])
-    |> validate_required([:name, :account_id])
+    |> cast(attrs, [:name, :account_id, :status, :photo, :bio])
+    |> check_constraint(:photo, name: :non_empty_photo)
+    |> foreign_key_constraint(:account_id)
   end
 end

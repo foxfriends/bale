@@ -45,5 +45,7 @@ defmodule Bale.Relationship.Relationship do
     relationship
     |> cast(attrs, [:level, :is_following, :account_id, :partner_id])
     |> validate_required([:level, :is_following, :account_id, :partner_id])
+    |> foreign_key_constraint(:account_id)
+    |> foreign_key_constraint(:partner_id)
   end
 end

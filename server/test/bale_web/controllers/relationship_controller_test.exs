@@ -16,6 +16,8 @@ defmodule BaleWeb.RelationshipControllerTest do
       })
 
     assert json_response(conn, 200) === %{
+             "account_id" => a,
+             "partner_id" => b,
              "level" => "friend",
              "is_following" => true
            }
@@ -35,6 +37,8 @@ defmodule BaleWeb.RelationshipControllerTest do
       })
 
     assert json_response(conn, 200) === %{
+             "account_id" => a,
+             "partner_id" => b,
              "level" => "neutral",
              "is_following" => false
            }
@@ -80,6 +84,8 @@ defmodule BaleWeb.RelationshipControllerTest do
       |> patch(~p"/api/relationships/#{a}/#{b}", %{"is_following" => false})
 
     assert json_response(conn, 200) === %{
+             "account_id" => a,
+             "partner_id" => b,
              "level" => "neutral",
              "is_following" => false
            }
@@ -96,6 +102,8 @@ defmodule BaleWeb.RelationshipControllerTest do
       |> patch(~p"/api/relationships/#{a}/#{b}", %{"is_following" => false})
 
     assert json_response(conn, 200) === %{
+             "account_id" => a,
+             "partner_id" => b,
              "level" => "friend",
              "is_following" => false
            }
@@ -124,6 +132,8 @@ defmodule BaleWeb.RelationshipControllerTest do
       |> get(~p"/api/relationships/#{a}/#{b}")
 
     assert json_response(conn, 200) === %{
+             "account_id" => a,
+             "partner_id" => b,
              "level" => "friend",
              "is_following" => true
            }
@@ -166,6 +176,8 @@ defmodule BaleWeb.RelationshipControllerTest do
       |> get(~p"/api/relationships/@me/#{b}")
 
     assert json_response(conn, 200) === %{
+             "account_id" => a,
+             "partner_id" => b,
              "level" => "friend",
              "is_following" => true
            }

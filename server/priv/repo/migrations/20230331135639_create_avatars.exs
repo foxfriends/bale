@@ -7,7 +7,13 @@ defmodule Bale.Repo.Migrations.CreateAvatars do
       add :size, :integer, null: false
       add :color, :integer, null: false
 
+      add :account_id,
+          references(:accounts, on_delete: :delete_all, on_update: :update_all, type: :binary_id),
+          null: false
+
       timestamps(default: fragment("now()"))
     end
+
+    create unique_index(:avatars, [:account_id])
   end
 end

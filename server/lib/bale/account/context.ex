@@ -30,7 +30,7 @@ defmodule Bale.Account do
           %Account{}
           |> Account.changeset(%{name: username})
           |> Repo.insert()
-          |> Repo.detect_conflict(),
+          |> Repo.detect_conflict(:name),
         {:ok, _} <-
           %Email{}
           |> Email.changeset(%{
@@ -39,7 +39,7 @@ defmodule Bale.Account do
             account_id: account_id
           })
           |> Repo.insert()
-          |> Repo.detect_conflict(),
+          |> Repo.detect_conflict(:email),
         {:ok, _} <-
           %Password{}
           |> Password.changeset(%{password: password_hash, account_id: account_id})
