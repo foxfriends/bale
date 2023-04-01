@@ -14,9 +14,11 @@ defmodule Bale.Schema.Event do
           description: String.t(),
           location: String.t(),
           is_public: boolean(),
+          is_joinable: boolean(),
+          is_subgroupable: boolean(),
           host_id: Ecto.UUID.t(),
           image_id: Ecto.UUID.t() | nil,
-          occurs_at: NaiveDateTime.t(),
+          occurs_at: NaiveDateTime.t() | nil,
           inserted_at: NaiveDateTime.t(),
           updated_at: NaiveDateTime.t()
         }
@@ -27,6 +29,7 @@ defmodule Bale.Schema.Event do
     field :description, :string
     field :is_joinable, :boolean
     field :is_public, :boolean
+    field :is_subgroupable, :boolean
     field :location, :string
     field :occurs_at, :naive_datetime
     field :title, :string
@@ -48,17 +51,10 @@ defmodule Bale.Schema.Event do
       :occurs_at,
       :is_public,
       :is_joinable,
+      :is_subgroupable,
       :parent_id,
       :host_id
     ])
-    |> validate_required([
-      :title,
-      :description,
-      :location,
-      :occurs_at,
-      :is_public,
-      :is_joinable,
-      :host_id
-    ])
+    |> validate_required([:host_id])
   end
 end

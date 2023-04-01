@@ -12,6 +12,7 @@ defmodule BaleWeb.Router do
 
   scope "/api/auth", BaleWeb do
     pipe_through :api
+
     post "/new", AuthController, :sign_up
     post "/", AuthController, :identify
   end
@@ -35,6 +36,13 @@ defmodule BaleWeb.Router do
       get "/:account_id/", AvatarController, :get
       post "/", AvatarController, :create
       patch "/:account_id", AvatarController, :partial_update
+    end
+
+    scope "/events" do
+      get "/:event_id/", EventController, :get
+      post "/", EventController, :create
+      patch "/:event_id", EventController, :partial_update
+      delete "/:event_id", EventController, :delete
     end
   end
 
