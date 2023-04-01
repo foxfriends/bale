@@ -1,4 +1,4 @@
-defmodule Bale.Relationship.Relationship do
+defmodule Bale.Schema.Relationship do
   @moduledoc """
   Schema to represent a relationship between two accounts. A relationship
   is one-directional, but friendships can be established by sending a
@@ -29,8 +29,8 @@ defmodule Bale.Relationship.Relationship do
   schema "relationships" do
     field :level, Ecto.Enum, values: [:neutral, :friend, :best_friend, :blocked]
     field :is_following, :boolean
-    belongs_to :account, Bale.Account.Account
-    belongs_to :partner, Bale.Account.Account
+    belongs_to :account, Bale.Schema.Account
+    belongs_to :partner, Bale.Schema.Account
 
     timestamps()
   end

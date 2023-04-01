@@ -1,4 +1,4 @@
-defmodule Bale.Account.Account do
+defmodule Bale.Schema.Account do
   @moduledoc """
   Schema for accounts.
 
@@ -25,9 +25,9 @@ defmodule Bale.Account.Account do
 
     timestamps()
 
-    has_many :passwords, Bale.Account.Password
-    has_many :emails, Bale.Account.Email
-    has_one :profile, Bale.Social.Profile
+    has_many :passwords, Bale.Schema.Password
+    has_many :emails, Bale.Schema.Email
+    has_one :profile, Bale.Schema.Profile
   end
 
   @doc false

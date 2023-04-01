@@ -1,4 +1,4 @@
-defmodule Bale.Account.Password do
+defmodule Bale.Schema.Password do
   @moduledoc """
   Schema for passwords associated with accounts. An account's name
   and its most recent password are used for login. Old passwords
@@ -27,7 +27,7 @@ defmodule Bale.Account.Password do
 
     timestamps()
 
-    belongs_to :account, Bale.Account.Account
+    belongs_to :account, Bale.Schema.Account
   end
 
   @doc false

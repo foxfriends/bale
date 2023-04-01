@@ -1,4 +1,4 @@
-defmodule Bale.Social.Profile do
+defmodule Bale.Schema.Profile do
   @moduledoc """
   Schema for profiles, which are distinct from accounts. In fact,
   an account may have no profile, that is ok.
@@ -26,7 +26,7 @@ defmodule Bale.Social.Profile do
     field :photo, :string
     field :bio, :string
 
-    belongs_to :account, Bale.Account.Account
+    belongs_to :account, Bale.Schema.Account
 
     timestamps()
   end

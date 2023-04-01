@@ -1,4 +1,4 @@
-defmodule Bale.Social.Avatar do
+defmodule Bale.Schema.Avatar do
   @moduledoc """
   Schema for in-app avatars (not quite profile pictures). The avatar is a turtle
   which the user can customize to represent them, and will be used in many places
@@ -27,7 +27,7 @@ defmodule Bale.Social.Avatar do
     field :color, :integer
     field :size, :integer
 
-    belongs_to :account, Bale.Account.Account
+    belongs_to :account, Bale.Schema.Account
 
     timestamps()
   end

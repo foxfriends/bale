@@ -7,7 +7,7 @@ defmodule Bale.Social do
 
   import Ecto.Query
   alias Bale.Repo
-  alias Bale.Social.{Avatar, Profile}
+  alias Bale.Schema.{Avatar, Profile}
 
   @spec create_profile(Ecto.UUID.t()) :: {:ok, Profile.t()} | {:error, :conflict}
   def create_profile(account_id) do

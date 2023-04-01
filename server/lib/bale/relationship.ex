@@ -5,8 +5,8 @@ defmodule Bale.Relationship do
   between accounts.
   """
 
-  alias Bale.Relationship.Relationship
   alias Bale.Repo
+  alias Bale.Schema.Relationship
   import Ecto.Query
 
   @spec lookup(Ecto.UUID.t(), Ecto.UUID.t()) :: Relationship.t() | nil

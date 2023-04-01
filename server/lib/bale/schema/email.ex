@@ -1,4 +1,4 @@
-defmodule Bale.Account.Email do
+defmodule Bale.Schema.Email do
   @moduledoc """
   Schema for email addresses attached to accounts. Login is performed
   by username, the emails are just here for contact, marketing, and
@@ -26,7 +26,7 @@ defmodule Bale.Account.Email do
 
     timestamps()
 
-    belongs_to :account, Bale.Account.Account
+    belongs_to :account, Bale.Schema.Account
   end
 
   @doc false
