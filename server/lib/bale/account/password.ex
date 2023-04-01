@@ -10,7 +10,6 @@ defmodule Bale.Account.Password do
 
   use Ecto.Schema
   import Ecto.Changeset
-  alias Bale.Repo
 
   @type t() :: %__MODULE__{
           __meta__: Ecto.Schema.Metadata.t(),
@@ -36,10 +35,5 @@ defmodule Bale.Account.Password do
     password
     |> cast(attrs, [:password, :account_id])
     |> validate_required([:password, :account_id])
-  end
-
-  @spec create(map()) :: {:ok, t()} | {:error, Ecto.Changeset.t()}
-  def create(attrs) do
-    %__MODULE__{} |> changeset(attrs) |> Repo.insert()
   end
 end

@@ -9,10 +9,8 @@ defmodule Bale.Relationship.Relationship do
   they block you.
   """
 
-  import Ecto.Query
   import Ecto.Changeset
   use Ecto.Schema
-  alias Bale.Repo
 
   @type level() :: :neutral | :friend | :best_friend | :blocked
   @type t() :: %__MODULE__{
@@ -47,13 +45,5 @@ defmodule Bale.Relationship.Relationship do
     relationship
     |> cast(attrs, [:level, :is_following, :account_id, :partner_id])
     |> validate_required([:level, :is_following, :account_id, :partner_id])
-  end
-
-  @spec delete(Ecto.UUID.t(), Ecto.UUID.t()) :: :ok
-  def delete(account_id, partner_id) do
-    from(r in __MODULE__,
-      where: r.account_id == ^account_id and r.partner_id == ^partner_id
-    )
-    |> Repo.delete_all()
   end
 end

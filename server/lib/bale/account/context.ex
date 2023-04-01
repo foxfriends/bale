@@ -26,15 +26,24 @@ defmodule Bale.Account do
 
     Repo.transaction(fn ->
       with(
-        {:ok, %Account{id: account_id}} <- Account.create(%{name: username}),
+        {:ok, %Account{id: account_id}} <-
+          %Account{}
+          |> Account.changeset(%{name: username})
+          |> Repo.insert()
+          |> Repo.detect_conflict(),
         {:ok, _} <-
-          Email.create(%{
+          %Email{}
+          |> Email.changeset(%{
             email: email_address,
             is_verified: not require_email_verification,
             account_id: account_id
-          }),
+          })
+          |> Repo.insert()
+          |> Repo.detect_conflict(),
         {:ok, _} <-
-          Password.create(%{password: password_hash, account_id: account_id})
+          %Password{}
+          |> Password.changeset(%{password: password_hash, account_id: account_id})
+          |> Repo.insert()
       ) do
         if require_email_verification do
           # TODO: send an email here

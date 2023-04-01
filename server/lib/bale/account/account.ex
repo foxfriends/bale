@@ -9,7 +9,6 @@ defmodule Bale.Account.Account do
 
   use Ecto.Schema
   import Ecto.Changeset
-  alias Bale.Repo
 
   @type t() :: %__MODULE__{
           __meta__: Ecto.Schema.Metadata.t(),
@@ -37,18 +36,5 @@ defmodule Bale.Account.Account do
     |> cast(attrs, [:name])
     |> validate_required([:name])
     |> unique_constraint(:name)
-  end
-
-  @spec create(map()) :: {:ok, t()} | {:error, :conflict}
-  def create(attrs) do
-    # TODO: More accurate (and reusable) detection of unique constraint
-    case %__MODULE__{} |> changeset(attrs) |> Repo.insert() do
-      {:ok, _} = ok ->
-        ok
-
-      {:error, _} ->
-        if Repo.in_transaction?(), do: Repo.rollback(:conflict)
-        {:error, :conflict}
-    end
   end
 end
