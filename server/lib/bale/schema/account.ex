@@ -28,6 +28,9 @@ defmodule Bale.Schema.Account do
     has_many :passwords, Bale.Schema.Password
     has_many :emails, Bale.Schema.Email
     has_one :profile, Bale.Schema.Profile
+
+    many_to_many :events, Bale.Schema.Event, join_through: Bale.Schema.Attendee
+    has_many :events_hosting, Bale.Schema.Event, foreign_key: :host_id
   end
 
   @doc false
