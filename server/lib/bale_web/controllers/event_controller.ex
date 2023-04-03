@@ -9,8 +9,8 @@ defmodule BaleWeb.EventController do
     end
   end
 
-  def create(conn, _) do
-    with {:ok, event} <- Events.create_event(conn.assigns[:event_id]) do
+  def create(conn, params) do
+    with {:ok, event} <- Events.create_event(conn.assigns[:account_id], params) do
       render(conn, :one, Map.from_struct(event))
     end
   end

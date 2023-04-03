@@ -3,7 +3,7 @@ defmodule BaleWeb.ProfileControllerTest do
   import BaleWeb.AuthFixtures
   import BaleWeb.ProfileFixtures
 
-  test "GET /api/profiles/:account", %{conn: conn} do
+  test "GET /api/profiles/:account_id", %{conn: conn} do
     {:ok, a} = account_fixture("a", "a@example.com")
     {:ok, _} = profile_fixture(a, "Testy McTestFace", "Testing", "", nil)
 
@@ -60,7 +60,7 @@ defmodule BaleWeb.ProfileControllerTest do
            }
   end
 
-  test "PATCH /api/profiles/", %{conn: conn} do
+  test "PATCH /api/profiles/:account_id", %{conn: conn} do
     {:ok, a} = account_fixture("a", "a@example.com")
     {:ok, _} = profile_fixture(a, "Testy McTestFace", "Testing", "", nil)
 
@@ -78,7 +78,7 @@ defmodule BaleWeb.ProfileControllerTest do
            }
   end
 
-  test "PATCH /api/profiles/ (missing)", %{conn: conn} do
+  test "PATCH /api/profiles/:account_id (missing)", %{conn: conn} do
     {:ok, a} = account_fixture("a", "a@example.com")
 
     conn =

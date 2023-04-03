@@ -3,7 +3,7 @@ defmodule BaleWeb.AvatarControllerTest do
   import BaleWeb.AuthFixtures
   import BaleWeb.AvatarFixtures
 
-  test "GET /api/avatars/:account", %{conn: conn} do
+  test "GET /api/avatars/:account_id", %{conn: conn} do
     {:ok, a} = account_fixture("a", "a@example.com")
     {:ok, _} = avatar_fixture(a, 0x00FF00, 50)
 
@@ -50,7 +50,7 @@ defmodule BaleWeb.AvatarControllerTest do
            }
   end
 
-  test "PATCH /api/avatars/", %{conn: conn} do
+  test "PATCH /api/avatars/:account_id", %{conn: conn} do
     {:ok, a} = account_fixture("a", "a@example.com")
     avatar_fixture(a)
 
@@ -66,7 +66,7 @@ defmodule BaleWeb.AvatarControllerTest do
            }
   end
 
-  test "PATCH /api/avatars/ (missing)", %{conn: conn} do
+  test "PATCH /api/avatars/:account_id (missing)", %{conn: conn} do
     {:ok, a} = account_fixture("a", "a@example.com")
 
     conn =

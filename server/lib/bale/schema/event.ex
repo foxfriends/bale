@@ -55,8 +55,10 @@ defmodule Bale.Schema.Event do
       :is_joinable,
       :is_subgroupable,
       :parent_id,
-      :host_id
+      :image_id
     ])
-    |> validate_required([:host_id])
+    |> foreign_key_constraint(:host_id)
+    |> foreign_key_constraint(:parent_id)
+    |> foreign_key_constraint(:image_id)
   end
 end

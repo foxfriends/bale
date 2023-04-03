@@ -21,11 +21,11 @@ defmodule Bale.Events do
   alias Bale.Repo
   alias Bale.Schema.Event
 
-  @spec create_event(Ecto.UUID.t()) :: {:ok, Event.t()} | {:error, :conflict}
-  def create_event(host_id) do
-    %Event{}
-    |> Event.changeset(%{host_id: host_id})
-    |> Repo.insert()
+  @spec create_event(Ecto.UUID.t(), map()) :: {:ok, Event.t()} | {:error, Ecto.Changeset.t()}
+  def create_event(host_id, defaults) do
+    %Event{host_id: host_id}
+    |> Event.changeset(defaults)
+    |> Repo.insert(returning: true)
   end
 
   @spec update_event(Event.t(), map()) :: {:ok, Event.t()} | {:error, Ecto.Changeset.t()}
