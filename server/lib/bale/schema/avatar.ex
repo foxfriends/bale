@@ -10,7 +10,7 @@ defmodule Bale.Schema.Avatar do
   import Ecto.Changeset
 
   @type size() :: 1..100
-  @type color() :: integer()
+  @type color() :: 0x000000..0xFFFFFF
   @type t() :: %__MODULE__{
           __meta__: Ecto.Schema.Metadata.t(),
           id: Ecto.UUID.t(),
@@ -24,8 +24,8 @@ defmodule Bale.Schema.Avatar do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "avatars" do
-    field :color, :integer
-    field :size, :integer
+    field :color, :integer, default: 0x00FF00
+    field :size, :integer, default: 50
 
     belongs_to :account, Bale.Schema.Account
 
@@ -35,8 +35,10 @@ defmodule Bale.Schema.Avatar do
   @doc false
   def changeset(avatar, attrs) do
     avatar
-    |> cast(attrs, [:size, :color, :account_id])
+    |> cast(attrs, [:size, :color])
     |> validate_number(:size, greater_than: 0, less_than_or_equal_to: 100)
+    |> validate_number(:color, greater_than_or_equal_to: 0, less_than_or_equal_to: 0xFFFFFF)
     |> foreign_key_constraint(:account_id)
+    |> unique_constraint(:account_id)
   end
 end

@@ -9,10 +9,10 @@ defmodule Bale.Social do
   alias Bale.Repo
   alias Bale.Schema.{Avatar, Profile}
 
-  @spec create_profile(Ecto.UUID.t()) :: {:ok, Profile.t()} | {:error, :conflict}
-  def create_profile(account_id) do
-    %Profile{}
-    |> Profile.changeset(%{account_id: account_id})
+  @spec create_profile(Ecto.UUID.t(), map()) :: {:ok, Profile.t()} | {:error, :conflict}
+  def create_profile(account_id, data \\ %{}) do
+    %Profile{account_id: account_id}
+    |> Profile.changeset(data)
     |> Repo.insert()
     |> Repo.detect_conflict(:account_id)
   end
@@ -29,10 +29,10 @@ defmodule Bale.Social do
     Repo.one(from p in Profile, where: p.account_id == ^account_id)
   end
 
-  @spec create_avatar(Ecto.UUID.t()) :: {:ok, Avatar.t()} | {:error, :conflict}
-  def create_avatar(account_id) do
-    %Avatar{}
-    |> Avatar.changeset(%{account_id: account_id})
+  @spec create_avatar(Ecto.UUID.t(), map()) :: {:ok, Avatar.t()} | {:error, :conflict}
+  def create_avatar(account_id, data \\ %{}) do
+    %Avatar{account_id: account_id}
+    |> Avatar.changeset(data)
     |> Repo.insert()
     |> Repo.detect_conflict(:account_id)
   end

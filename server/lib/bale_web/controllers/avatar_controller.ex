@@ -9,8 +9,8 @@ defmodule BaleWeb.AvatarController do
     end
   end
 
-  def create(conn, _) do
-    with {:ok, avatar} <- Social.create_avatar(conn.assigns[:account_id]) do
+  def create(conn, params) do
+    with {:ok, avatar} <- Social.create_avatar(conn.assigns[:account_id], params) do
       render(conn, :one, Map.from_struct(avatar))
     end
   end

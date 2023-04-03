@@ -13,7 +13,7 @@ defmodule Bale.Schema.Profile do
           account_id: Ecto.UUID.t(),
           status: String.t(),
           bio: String.t(),
-          photo: String.t() | nil,
+          image_id: String.t() | nil,
           inserted_at: NaiveDateTime.t(),
           updated_at: NaiveDateTime.t()
         }
@@ -21,10 +21,9 @@ defmodule Bale.Schema.Profile do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "profiles" do
-    field :name, :string
-    field :status, :string
-    field :photo, :string
-    field :bio, :string
+    field :name, :string, default: ""
+    field :status, :string, default: ""
+    field :bio, :string, default: ""
 
     belongs_to :account, Bale.Schema.Account
     belongs_to :image, Bale.Schema.Image
@@ -35,8 +34,9 @@ defmodule Bale.Schema.Profile do
   @doc false
   def changeset(profile, attrs) do
     profile
-    |> cast(attrs, [:name, :account_id, :status, :photo, :bio])
-    |> check_constraint(:photo, name: :non_empty_photo)
+    |> cast(attrs, [:name, :status, :image_id, :bio])
     |> foreign_key_constraint(:account_id)
+    |> foreign_key_constraint(:image_id)
+    |> unique_constraint(:account_id)
   end
 end

@@ -13,11 +13,15 @@ defmodule Bale.Repo do
 
   def detect_conflict(other, _), do: other
 
-  defp detect_conflict([{field, _} | _], _, field) do
+  defp detect_conflict(_, _, _, _ \\ "has already been taken")
+
+  defp detect_conflict([{field, {message, _}} | _], _, field, message) do
     if in_transaction?(), do: rollback(:conflict)
     {:error, :conflict}
   end
 
-  defp detect_conflict([_ | rest], original, field), do: detect_conflict(rest, original, field)
-  defp detect_conflict([], original, _), do: original
+  defp detect_conflict([_ | rest], original, field, message),
+    do: detect_conflict(rest, original, field, message)
+
+  defp detect_conflict([], original, _, _), do: original
 end

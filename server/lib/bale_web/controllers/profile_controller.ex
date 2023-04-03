@@ -9,8 +9,8 @@ defmodule BaleWeb.ProfileController do
     end
   end
 
-  def create(conn, _) do
-    with {:ok, profile} <- Social.create_profile(conn.assigns[:account_id]) do
+  def create(conn, params) do
+    with {:ok, profile} <- Social.create_profile(conn.assigns[:account_id], params) do
       render(conn, :one, Map.from_struct(profile))
     end
   end

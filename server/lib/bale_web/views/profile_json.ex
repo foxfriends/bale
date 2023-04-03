@@ -5,7 +5,7 @@ defmodule BaleWeb.ProfileJSON do
       status: profile[:status],
       bio: profile[:bio],
       name: profile[:name],
-      photo: profile[:photo]
+      image_id: profile[:image_id]
     }
   end
 end
