@@ -8,20 +8,28 @@ defmodule Bale.Repo do
         when error: var
 
   def detect_conflict({:error, %Ecto.Changeset{errors: errors}} = original, field) do
-    detect_conflict(errors, original, field)
+    detect_error(errors, original, field, "has already been taken", :conflict)
   end
 
   def detect_conflict(other, _), do: other
 
-  defp detect_conflict(_, _, _, _ \\ "has already been taken")
+  @spec detect_missing({:ok, t}, atom()) :: {:ok, t} when t: var
+  @spec detect_missing({:error, error}, atom()) :: {:error, error} | {:error, :conflict}
+        when error: var
 
-  defp detect_conflict([{field, {message, _}} | _], _, field, message) do
-    if in_transaction?(), do: rollback(:conflict)
-    {:error, :conflict}
+  def detect_missing({:error, %Ecto.Changeset{errors: errors}} = original, field) do
+    detect_error(errors, original, field, "does not exist", :not_found)
   end
 
-  defp detect_conflict([_ | rest], original, field, message),
-    do: detect_conflict(rest, original, field, message)
+  def detect_missing(other, _), do: other
 
-  defp detect_conflict([], original, _, _), do: original
+  defp detect_error([{field, {message, _}} | _], _, field, message, error_type) do
+    if in_transaction?(), do: rollback(error_type)
+    {:error, error_type}
+  end
+
+  defp detect_error([_ | rest], original, field, message, error_type),
+    do: detect_error(rest, original, field, message, error_type)
+
+  defp detect_error([], original, _, _, _), do: original
 end

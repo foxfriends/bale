@@ -39,10 +39,17 @@ defmodule BaleWeb.Router do
     end
 
     scope "/events" do
-      get "/:event_id/", EventController, :get
       post "/", EventController, :create
-      patch "/:event_id", EventController, :partial_update
-      delete "/:event_id", EventController, :delete
+
+      scope "/:event_id" do
+        get "/", EventController, :get
+        patch "/", EventController, :partial_update
+        delete "/", EventController, :delete
+
+        scope "/attendees/:account_id" do
+          patch "/", EventController, :update_attendee
+        end
+      end
     end
   end
 

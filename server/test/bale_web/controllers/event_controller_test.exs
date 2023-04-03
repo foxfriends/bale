@@ -23,7 +23,8 @@ defmodule BaleWeb.EventControllerTest do
              "is_subgroupable" => false,
              "host_id" => a,
              "image_id" => nil,
-             "occurs_at" => nil
+             "occurs_at" => nil,
+             "attendees" => []
            }
   end
 
@@ -44,7 +45,8 @@ defmodule BaleWeb.EventControllerTest do
              "is_subgroupable" => false,
              "host_id" => ^a,
              "image_id" => nil,
-             "occurs_at" => nil
+             "occurs_at" => nil,
+             "attendees" => []
            } = json_response(conn, 200)
   end
 
@@ -66,7 +68,8 @@ defmodule BaleWeb.EventControllerTest do
              "is_subgroupable" => false,
              "host_id" => ^a,
              "image_id" => nil,
-             "occurs_at" => nil
+             "occurs_at" => nil,
+             "attendees" => []
            } = json_response(conn, 200)
   end
 
@@ -89,7 +92,8 @@ defmodule BaleWeb.EventControllerTest do
              "is_subgroupable" => false,
              "host_id" => a,
              "image_id" => nil,
-             "occurs_at" => nil
+             "occurs_at" => nil,
+             "attendees" => []
            }
   end
 
@@ -100,6 +104,47 @@ defmodule BaleWeb.EventControllerTest do
       conn
       |> auth_as(a)
       |> patch(~p"/api/events/#{a}", %{})
+
+    assert json_response(conn, 404) === %{"errors" => %{"detail" => "Not Found"}}
+  end
+
+  test "PATCH /api/events/:event_id/attendees/:account_id (ok)", %{conn: conn} do
+    {:ok, a} = account_fixture("a", "a@example.com")
+    {:ok, b} = account_fixture("b", "b@example.com")
+    {:ok, %Event{id: e}} = event_fixture(a)
+
+    conn =
+      conn
+      |> auth_as(b)
+      |> patch(~p"/api/events/#{e}/attendees/#{b}", %{"state" => "attending"})
+
+    assert json_response(conn, 200) === %{
+             "event_id" => e,
+             "account_id" => b,
+             "state" => "attending"
+           }
+  end
+
+  test "PATCH /api/events/:event_id/attendees/:account_id (not me)", %{conn: conn} do
+    {:ok, a} = account_fixture("a", "a@example.com")
+    {:ok, b} = account_fixture("b", "b@example.com")
+    {:ok, %Event{id: e}} = event_fixture(a)
+
+    conn =
+      conn
+      |> auth_as(a)
+      |> patch(~p"/api/events/#{e}/attendees/#{b}", %{"state" => "attending"})
+
+    assert json_response(conn, 403) === %{"errors" => %{"detail" => "Forbidden"}}
+  end
+
+  test "PATCH /api/events/:event_id/attendees/:account_id (no event)", %{conn: conn} do
+    {:ok, a} = account_fixture("a", "a@example.com")
+
+    conn =
+      conn
+      |> auth_as(a)
+      |> patch(~p"/api/events/#{a}/attendees/#{a}", %{"state" => "attending"})
 
     assert json_response(conn, 404) === %{"errors" => %{"detail" => "Not Found"}}
   end

@@ -31,7 +31,8 @@ defmodule Bale.Schema.Attendee do
   @doc false
   def changeset(attendee, attrs) do
     attendee
-    |> cast(attrs, [:state, :account_id, :event_id])
-    |> validate_required([:account_id, :event_id])
+    |> cast(attrs, [:state])
+    |> foreign_key_constraint(:account_id)
+    |> foreign_key_constraint(:event_id)
   end
 end
