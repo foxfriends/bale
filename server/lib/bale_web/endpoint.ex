@@ -35,5 +35,8 @@ defmodule BaleWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
+
+  socket "/api/socket", BaleWeb.Socket, websocket: true, longpoll: false
+
   plug BaleWeb.Router
 end

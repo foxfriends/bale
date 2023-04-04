@@ -32,4 +32,12 @@ defmodule Bale.Schema.Image do
     |> validate_required([:key])
     |> unique_constraint(:key)
   end
+
+  @spec to_json(t()) :: map()
+  def to_json(image) do
+    %{
+      id: image.id,
+      key: image.key
+    }
+  end
 end

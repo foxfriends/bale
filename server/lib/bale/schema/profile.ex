@@ -4,6 +4,8 @@ defmodule Bale.Schema.Profile do
   an account may have no profile, that is ok.
   """
 
+  alias Bale.Repo
+  alias Bale.Schema.Image
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -38,5 +40,17 @@ defmodule Bale.Schema.Profile do
     |> foreign_key_constraint(:account_id)
     |> foreign_key_constraint(:image_id)
     |> unique_constraint(:account_id)
+  end
+
+  @spec to_json(t()) :: map()
+  def to_json(profile) do
+    profile = profile |> Repo.preload(:image)
+
+    %{
+      id: profile.account_id,
+      status: profile.status,
+      bio: profile.bio,
+      image: profile.image |> Image.to_json()
+    }
   end
 end
