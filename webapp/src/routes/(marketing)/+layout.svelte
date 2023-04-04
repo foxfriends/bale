@@ -1,4 +1,4 @@
-<script context="module">
+<script context="module" lang="ts">
   import { PUBLIC_BASE_URL } from "$env/static/public";
 </script>
 

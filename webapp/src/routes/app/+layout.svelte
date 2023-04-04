@@ -2,6 +2,15 @@
   import { PUBLIC_APP_BASE_URL } from "$env/static/public";
 </script>
 
+<script lang="ts">
+  import type { PageServerData } from "./$types";
+  import { setContext } from "svelte";
+
+  export let data: PageServerData;
+
+  setContext("identity", data.identity);
+</script>
+
 <svelte:head>
   <base href={PUBLIC_APP_BASE_URL} />
 </svelte:head>
