@@ -2,14 +2,14 @@ import { readable, type Readable } from "svelte/store";
 import { browser } from "$app/environment";
 import { Socket, type SocketConnectOption } from "phoenix";
 
-type StoreChannel = {
+export type StoreChannel = {
   on<T>(this: void, event: string): Readable<T | undefined>;
   on<T>(this: void, event: string, defaultValue: T): Readable<T>;
   push(this: void, event: string, payload: object, timeout?: number): void;
 };
 
-type StoreSocket = {
-  channel(this: void, topic: string, params: object): Readable<StoreChannel>;
+export type StoreSocket = {
+  channel(this: void, topic: string, params?: object): Readable<StoreChannel>;
 };
 
 export function socket(url: string, opts: Partial<SocketConnectOption>): Readable<StoreSocket> {
@@ -25,7 +25,7 @@ export function socket(url: string, opts: Partial<SocketConnectOption>): Readabl
 
   const socket = new Socket(url, opts);
 
-  function channel(topic: string, params: object) {
+  function channel(topic: string, params?: object) {
     const channel = socket.channel(topic, params);
 
     function on<T>(event: string): Readable<T | undefined>;

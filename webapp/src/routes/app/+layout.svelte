@@ -2,18 +2,15 @@
   import { PUBLIC_APP_BASE_URL, PUBLIC_SOCKET_BASE_URL } from "$env/static/public";
   import type { LayoutServerData } from "./$types";
   import { setContext } from "svelte";
-  import { socket } from "$lib/store/socket";
+  import { createSocket } from "$lib/context/socket";
 
   export let data: LayoutServerData;
 
-  setContext(
-    "socket",
-    socket(`${PUBLIC_SOCKET_BASE_URL}/api/socket/`, {
-      params: {
-        identity: data.identity,
-      },
-    }),
-  );
+  createSocket(`${PUBLIC_SOCKET_BASE_URL}/api/socket/`, {
+    params: {
+      identity: data.identity,
+    },
+  });
 
   setContext("identity", data.identity);
 </script>

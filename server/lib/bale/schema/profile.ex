@@ -13,6 +13,7 @@ defmodule Bale.Schema.Profile do
           __meta__: Ecto.Schema.Metadata.t(),
           id: Ecto.UUID.t(),
           account_id: Ecto.UUID.t(),
+          name: String.t(),
           status: String.t(),
           bio: String.t(),
           image_id: String.t() | nil,
@@ -48,9 +49,14 @@ defmodule Bale.Schema.Profile do
 
     %{
       id: profile.account_id,
+      name: profile.name,
       status: profile.status,
       bio: profile.bio,
-      image: profile.image |> Image.to_json()
+      image:
+        case profile.image do
+          nil -> nil
+          image -> Image.to_json(image)
+        end
     }
   end
 end

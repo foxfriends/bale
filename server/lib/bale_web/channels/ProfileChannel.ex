@@ -25,16 +25,19 @@ defmodule BaleWeb.ProfileChannel do
     {:reply, :error, socket}
   end
 
-  def handle_in("update", %{"body" => body}, socket) do
-    profile =
-      with {:ok, profile} <-
-             Social.find_profile(socket.assigns.profile_id) |> Social.update_profile(body) do
-        Profile.to_json(profile)
+  def handle_in("update", update, socket) do
+    updated =
+      case Social.find_profile(socket.assigns.profile_id) do
+        nil -> Social.create_profile(socket.assigns.profile_id, update)
+        profile -> Social.update_profile(profile, update)
       end
 
-    broadcast!(socket, "update", profile)
+    with {:ok, profile} <- updated do
+      profile = Profile.to_json(profile)
+      broadcast!(socket, "update", profile)
+    end
 
-    {:reply, :error, socket}
+    {:noreply, socket}
   end
 
   def handle_info(:after_join, socket) do
