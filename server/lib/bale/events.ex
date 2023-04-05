@@ -19,8 +19,7 @@ defmodule Bale.Events do
   """
 
   alias Bale.Repo
-  alias Bale.Schema.Event
-  alias Bale.Schema.Attendee
+  alias Bale.Schema.{Attendee, Event}
 
   @spec create_event(Ecto.UUID.t(), map()) :: {:ok, Event.t()} | {:error, Ecto.Changeset.t()}
   def create_event(host_id, defaults) do

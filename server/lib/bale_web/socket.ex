@@ -1,4 +1,8 @@
 defmodule BaleWeb.Socket do
+  @moduledoc """
+  Socket for the app. Really just doing everything in here.
+  """
+
   use Phoenix.Socket
 
   def id(socket), do: "socket:#{socket.assigns.account_id}"
