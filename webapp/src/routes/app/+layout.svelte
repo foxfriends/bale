@@ -1,10 +1,10 @@
 <script lang="ts">
   import { PUBLIC_APP_BASE_URL, PUBLIC_SOCKET_BASE_URL } from "$env/static/public";
-  import type { PageServerData } from "./$types";
+  import type { LayoutServerData } from "./$types";
   import { setContext } from "svelte";
   import { socket } from "$lib/store/socket";
 
-  export let data: PageServerData;
+  export let data: LayoutServerData;
 
   setContext(
     "socket",
