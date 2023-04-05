@@ -3,17 +3,12 @@ defmodule BaleWeb.ProfileChannel do
   alias Bale.Social
   alias Bale.Schema.Profile
 
+  def join("profile:@me", param, socket),
+    do: join("profile:" <> socket.assigns.account_id, param, socket)
+
   def join("profile:" <> id, _, socket) do
-    profile =
-      case Social.find_profile(id) do
-        nil -> nil
-        profile -> Profile.to_json(profile)
-      end
-
-    socket
-    |> assign(:profile_id, id)
-    |> push("update", profile)
-
+    socket = assign(socket, :profile_id, id)
+    send(self(), :after_join)
     {:ok, socket}
   end
 
@@ -36,5 +31,17 @@ defmodule BaleWeb.ProfileChannel do
     broadcast!(socket, "update", profile)
 
     {:reply, :error, socket}
+  end
+
+  def handle_info(:after_join, socket) do
+    profile =
+      case Social.find_profile(socket.assigns.profile_id) do
+        nil -> %{}
+        profile -> Profile.to_json(profile)
+      end
+
+    push(socket, "update", profile)
+
+    {:noreply, socket}
   end
 end

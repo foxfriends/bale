@@ -1,12 +1,19 @@
-<script context="module">
-  import { PUBLIC_APP_BASE_URL } from "$env/static/public";
-</script>
-
 <script lang="ts">
+  import { PUBLIC_APP_BASE_URL, PUBLIC_SOCKET_BASE_URL } from "$env/static/public";
   import type { PageServerData } from "./$types";
   import { setContext } from "svelte";
+  import { socket } from "$lib/store/socket";
 
   export let data: PageServerData;
+
+  setContext(
+    "socket",
+    socket(`${PUBLIC_SOCKET_BASE_URL}/api/socket/`, {
+      params: {
+        identity: data.identity,
+      },
+    }),
+  );
 
   setContext("identity", data.identity);
 </script>

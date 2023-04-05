@@ -3,8 +3,8 @@ defmodule BaleWeb.Socket do
 
   def id(socket), do: "socket:#{socket.assigns.account_id}"
 
-  def connect(%{"token" => token}, socket, _) do
-    case BaleWeb.IdentityToken.verify_and_validate(token) do
+  def connect(%{"identity" => identity}, socket, _) do
+    case BaleWeb.IdentityToken.verify_and_validate(identity) do
       {:ok, %{"sub" => account_id}} ->
         socket = assign(socket, :account_id, account_id)
         {:ok, socket}
