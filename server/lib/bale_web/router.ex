@@ -47,7 +47,7 @@ defmodule BaleWeb.Router do
         delete "/", EventController, :delete
 
         scope "/attendees/:account_id" do
-          patch "/", EventController, :update_attendee
+          put "/", EventController, :replace_attendee
         end
       end
     end

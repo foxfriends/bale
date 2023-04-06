@@ -43,11 +43,12 @@ defmodule Bale.Events do
     end
   end
 
-  @spec update_attendee(Ecto.UUID.t(), Ecto.UUID.t(), map()) ::
-          {:ok, Attendee.t()} | {:error, Ecto.Changeset.t()}
-  def update_attendee(account_id, event_id, changes) do
+  @spec replace_attendee(Ecto.UUID.t(), Ecto.UUID.t(), map()) ::
+          {:ok, Attendee.t()} | {:error, Ecto.Changeset.t()} | {:error, :not_found}
+  def replace_attendee(account_id, event_id, changes) do
     %Attendee{account_id: account_id, event_id: event_id}
     |> Attendee.changeset(changes)
+    |> Attendee.replacing()
     |> Repo.insert(
       on_conflict: {:replace, [:state]},
       conflict_target: [:account_id, :event_id],

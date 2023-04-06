@@ -14,7 +14,7 @@ defmodule Bale.Repo do
   def detect_conflict(other, _), do: other
 
   @spec detect_missing({:ok, t}, atom()) :: {:ok, t} when t: var
-  @spec detect_missing({:error, error}, atom()) :: {:error, error} | {:error, :conflict}
+  @spec detect_missing({:error, error}, atom()) :: {:error, error} | {:error, :not_found}
         when error: var
 
   def detect_missing({:error, %Ecto.Changeset{errors: errors}} = original, field) do

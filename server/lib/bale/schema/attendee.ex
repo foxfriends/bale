@@ -36,6 +36,10 @@ defmodule Bale.Schema.Attendee do
     |> foreign_key_constraint(:event_id)
   end
 
+  def replacing(changeset) do
+    changeset |> validate_required([:state])
+  end
+
   def to_json(attendee) do
     %{
       account_id: attendee.account_id,

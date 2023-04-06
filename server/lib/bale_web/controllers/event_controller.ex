@@ -33,14 +33,16 @@ defmodule BaleWeb.EventController do
     Ecto.InvalidChangesetError -> {:error, :bad_request}
   end
 
-  def update_attendee(conn, %{"event_id" => event_id, "account_id" => account_id} = params)
+  def replace_attendee(conn, %{"event_id" => event_id, "account_id" => account_id} = params)
       when is_me(conn, account_id) do
-    with {:ok, attendee} <- Events.update_attendee(account_id, event_id, params) do
-      json(conn, Attendee.to_json(attendee))
+    case Events.replace_attendee(account_id, event_id, params) do
+      {:ok, attendee} -> json(conn, Attendee.to_json(attendee))
+      {:error, :not_found} -> {:error, :not_found}
+      {:error, _} -> {:error, :bad_request}
     end
   rescue
     Ecto.InvalidChangesetError -> {:error, :bad_request}
   end
 
-  def update_attendee(_, _), do: {:error, :forbidden}
+  def replace_attendee(_, _), do: {:error, :forbidden}
 end
