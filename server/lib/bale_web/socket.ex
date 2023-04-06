@@ -19,4 +19,5 @@ defmodule BaleWeb.Socket do
   end
 
   channel "profile:*", BaleWeb.ProfileChannel
+  channel "avatar:*", BaleWeb.AvatarChannel
 end
