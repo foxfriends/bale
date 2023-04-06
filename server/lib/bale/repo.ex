@@ -32,4 +32,7 @@ defmodule Bale.Repo do
     do: detect_error(rest, original, field, message, error_type)
 
   defp detect_error([], original, _, _, _), do: original
+
+  defguard is_loaded(schema, field)
+           when not is_struct(:erlang.map_get(field, schema), Ecto.Association.NotLoaded)
 end

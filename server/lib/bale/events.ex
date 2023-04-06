@@ -35,9 +35,12 @@ defmodule Bale.Events do
     |> Repo.update()
   end
 
-  @spec get_event(Ecto.UUID.t()) :: Event.t() | nil
+  @spec get_event(Ecto.UUID.t()) :: {:ok, Event.t()} | {:not_found, Ecto.UUID.t()}
   def get_event(id) do
-    Repo.get(Event, id)
+    case Repo.get(Event, id) do
+      nil -> {:not_found, id}
+      event -> {:ok, event}
+    end
   end
 
   @spec update_attendee(Ecto.UUID.t(), Ecto.UUID.t(), map()) ::

@@ -4,8 +4,11 @@ defmodule Bale.Schema.Event do
   of the whole app.
   """
 
+  alias Bale.Repo
   use Ecto.Schema
   import Ecto.Changeset
+  alias Bale.Schema.Attendee
+  import Repo
 
   @type t() :: %__MODULE__{
           __meta__: Ecto.Schema.Metadata.t(),
@@ -60,5 +63,24 @@ defmodule Bale.Schema.Event do
     |> foreign_key_constraint(:host_id)
     |> foreign_key_constraint(:parent_id)
     |> foreign_key_constraint(:image_id)
+  end
+
+  def to_json(event) when not is_loaded(event, :attendees),
+    do: event |> Repo.preload(:attendees) |> to_json()
+
+  def to_json(event) do
+    %{
+      id: event.id,
+      title: event.title,
+      description: event.description,
+      location: event.location,
+      is_public: event.is_public,
+      is_joinable: event.is_joinable,
+      is_subgroupable: event.is_subgroupable,
+      host_id: event.host_id,
+      image_id: event.image_id,
+      occurs_at: event.occurs_at,
+      attendees: event.attendees |> Enum.map(&Attendee.to_json/1)
+    }
   end
 end

@@ -35,4 +35,12 @@ defmodule Bale.Schema.Attendee do
     |> foreign_key_constraint(:account_id)
     |> foreign_key_constraint(:event_id)
   end
+
+  def to_json(attendee) do
+    %{
+      account_id: attendee.account_id,
+      event_id: attendee.event_id,
+      state: attendee.state
+    }
+  end
 end
