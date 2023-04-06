@@ -17,7 +17,7 @@ defmodule BaleWeb.ProfileControllerTest do
              "name" => "Testy McTestFace",
              "status" => "Testing",
              "bio" => "",
-             "image_id" => nil
+             "image" => nil
            }
   end
 
@@ -34,7 +34,7 @@ defmodule BaleWeb.ProfileControllerTest do
              "name" => "Test Name",
              "status" => "",
              "bio" => "I like tests",
-             "image_id" => nil
+             "image" => nil
            }
   end
 
@@ -56,7 +56,7 @@ defmodule BaleWeb.ProfileControllerTest do
              "name" => "Test Name",
              "status" => "",
              "bio" => "I like tests",
-             "image_id" => nil
+             "image" => nil
            }
   end
 
@@ -74,7 +74,7 @@ defmodule BaleWeb.ProfileControllerTest do
              "name" => "Testy McTestFace",
              "status" => "Not Testing",
              "bio" => "",
-             "image_id" => nil
+             "image" => nil
            }
   end
 

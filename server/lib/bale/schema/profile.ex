@@ -48,7 +48,7 @@ defmodule Bale.Schema.Profile do
     profile = profile |> Repo.preload(:image)
 
     %{
-      id: profile.account_id,
+      account_id: profile.account_id,
       name: profile.name,
       status: profile.status,
       bio: profile.bio,

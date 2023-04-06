@@ -41,4 +41,12 @@ defmodule Bale.Schema.Avatar do
     |> foreign_key_constraint(:account_id)
     |> unique_constraint(:account_id)
   end
+
+  def to_json(avatar) do
+    %{
+      account_id: avatar.account_id,
+      color: avatar.color,
+      size: avatar.size
+    }
+  end
 end
