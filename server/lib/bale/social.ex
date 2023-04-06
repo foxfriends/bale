@@ -24,9 +24,12 @@ defmodule Bale.Social do
     |> Repo.update()
   end
 
-  @spec find_profile(Ecto.UUID.t()) :: Profile.t() | nil
+  @spec find_profile(Ecto.UUID.t()) :: {:ok, Profile.t()} | {:not_found, Ecto.UUID.t()}
   def find_profile(account_id) do
-    Repo.one(from(p in Profile, where: p.account_id == ^account_id))
+    case Repo.one(from(p in Profile, where: p.account_id == ^account_id)) do
+      nil -> {:not_found, account_id}
+      profile -> {:ok, profile}
+    end
   end
 
   @spec create_avatar(Ecto.UUID.t(), map()) :: {:ok, Avatar.t()} | {:error, :conflict}
@@ -44,8 +47,11 @@ defmodule Bale.Social do
     |> Repo.update()
   end
 
-  @spec find_avatar(Ecto.UUID.t()) :: Avatar.t() | nil
+  @spec find_avatar(Ecto.UUID.t()) :: {:ok, Avatar.t()} | {:not_found, Ecto.UUID.t()}
   def find_avatar(account_id) do
-    Repo.one(from(a in Avatar, where: a.account_id == ^account_id))
+    case Repo.one(from(a in Avatar, where: a.account_id == ^account_id)) do
+      nil -> {:not_found, account_id}
+      avatar -> {:ok, avatar}
+    end
   end
 end
