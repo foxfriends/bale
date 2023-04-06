@@ -89,5 +89,7 @@ jobs:
             ${{ runner.os }}-
       - name: Install node modules
         run: npm ci
+      - name: Copy .env
+        run: cp .env.example .env
       - name: Run check
         run: npm run check
