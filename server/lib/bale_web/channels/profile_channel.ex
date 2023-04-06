@@ -7,7 +7,7 @@ defmodule BaleWeb.ProfileChannel do
   alias Bale.Schema.Profile
   alias Bale.Social
 
-  defguardp is_me(socket) when socket.assigns.account_id != socket.assigns.profile_id
+  defguardp is_me(socket) when socket.assigns.account_id == socket.assigns.profile_id
 
   def join("profile:@me", param, socket),
     do: join("profile:" <> socket.assigns.account_id, param, socket)

@@ -7,7 +7,7 @@ defmodule BaleWeb.AvatarChannel do
   alias Bale.Schema.Avatar
   alias Bale.Social
 
-  defguardp is_me(socket) when socket.assigns.account_id != socket.assigns.avatar_id
+  defguardp is_me(socket) when socket.assigns.account_id == socket.assigns.avatar_id
 
   def join("avatar:@me", param, socket),
     do: join("avatar:" <> socket.assigns.account_id, param, socket)
