@@ -24,10 +24,10 @@ defmodule BaleWeb.EventController do
     end
   end
 
-  def partial_update(%{assigns: %{account_id: me}}, %{"host_id" => owner}) when owner != me,
+  def update(%{assigns: %{account_id: me}}, %{"host_id" => owner}) when owner != me,
     do: {:error, :forbidden}
 
-  def partial_update(conn, %{"event_id" => event_id} = params) do
+  def update(conn, %{"event_id" => event_id} = params) do
     case Events.get_event(event_id) do
       nil ->
         {:error, :not_found}

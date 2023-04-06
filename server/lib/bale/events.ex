@@ -46,7 +46,7 @@ defmodule Bale.Events do
     %Attendee{account_id: account_id, event_id: event_id}
     |> Attendee.changeset(changes)
     |> Repo.insert(
-      on_conflict: [set: [state: changes["state"]]],
+      on_conflict: {:replace, [:state]},
       conflict_target: [:account_id, :event_id],
       returning: true
     )

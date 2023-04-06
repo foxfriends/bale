@@ -3,7 +3,7 @@ defmodule BaleWeb.AuthController do
   alias Bale.Account
 
   def sign_up(conn, %{"username" => username, "email" => email, "password" => password}) do
-    with({:ok, _} <- Account.create(%{username: username, email: email, password: password})) do
+    with {:ok, _} <- Account.create(%{username: username, email: email, password: password}) do
       json(conn, %{ok: true})
     end
   end

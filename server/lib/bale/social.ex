@@ -13,7 +13,7 @@ defmodule Bale.Social do
   def create_profile(account_id, data \\ %{}) do
     %Profile{account_id: account_id}
     |> Profile.changeset(data)
-    |> Repo.insert()
+    |> Repo.insert(returning: true)
     |> Repo.detect_conflict(:account_id)
   end
 
@@ -36,7 +36,7 @@ defmodule Bale.Social do
   def create_avatar(account_id, data \\ %{}) do
     %Avatar{account_id: account_id}
     |> Avatar.changeset(data)
-    |> Repo.insert()
+    |> Repo.insert(returning: true)
     |> Repo.detect_conflict(:account_id)
   end
 

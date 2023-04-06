@@ -3,6 +3,8 @@ defmodule BaleWeb.ProfileController do
   alias Bale.Schema.Profile
   alias Bale.Social
 
+  defguardp is_me(conn, account_id) when conn.assigns.account_id == account_id
+
   def get(conn, %{"account_id" => account_id}) do
     case Social.find_profile(account_id) do
       {:not_found, _} -> {:error, :not_found}
@@ -16,10 +18,7 @@ defmodule BaleWeb.ProfileController do
     end
   end
 
-  def partial_update(%{assigns: %{account_id: me}}, %{"account_id" => owner}) when owner != me,
-    do: {:error, :forbidden}
-
-  def partial_update(conn, %{"account_id" => account_id} = params) do
+  def update(conn, %{"account_id" => account_id} = params) when is_me(conn, account_id) do
     with(
       {:ok, profile} <- Social.find_profile(account_id),
       {:ok, updated} <- Social.update_profile(profile, params)
@@ -32,4 +31,6 @@ defmodule BaleWeb.ProfileController do
   rescue
     Ecto.InvalidChangesetError -> {:error, :bad_request}
   end
+
+  def update(_, _), do: {:error, :forbidden}
 end

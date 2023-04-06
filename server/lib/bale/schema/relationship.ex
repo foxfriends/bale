@@ -35,17 +35,24 @@ defmodule Bale.Schema.Relationship do
     timestamps()
   end
 
-  def update_changeset(relationship, attrs) do
+  def changeset(relationship, attrs) do
     relationship
-    |> cast(attrs, [:level, :is_following, :account_id, :partner_id])
-    |> validate_required([:account_id, :partner_id])
-  end
-
-  def replace_changeset(relationship, attrs) do
-    relationship
-    |> cast(attrs, [:level, :is_following, :account_id, :partner_id])
-    |> validate_required([:level, :is_following, :account_id, :partner_id])
+    |> cast(attrs, [:level, :is_following])
     |> foreign_key_constraint(:account_id)
     |> foreign_key_constraint(:partner_id)
+    |> unique_constraint([:account_id, :partner_id], error_key: :partner_id)
+  end
+
+  def replacing(changeset) do
+    changeset |> validate_required([:level, :is_following])
+  end
+
+  def to_json(relationship) do
+    %{
+      account_id: relationship.account_id,
+      partner_id: relationship.partner_id,
+      level: relationship.level,
+      is_following: relationship.is_following
+    }
   end
 end

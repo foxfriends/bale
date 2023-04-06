@@ -22,20 +22,20 @@ defmodule BaleWeb.Router do
 
     scope "/relationships/:account_id" do
       get "/:partner_id", RelationshipController, :get
-      put "/:partner_id", RelationshipController, :update
-      patch "/:partner_id", RelationshipController, :partial_update
+      put "/:partner_id", RelationshipController, :replace
+      patch "/:partner_id", RelationshipController, :update
     end
 
     scope "/profiles" do
       get "/:account_id/", ProfileController, :get
       post "/", ProfileController, :create
-      patch "/:account_id", ProfileController, :partial_update
+      patch "/:account_id", ProfileController, :update
     end
 
     scope "/avatars" do
       get "/:account_id/", AvatarController, :get
       post "/", AvatarController, :create
-      patch "/:account_id", AvatarController, :partial_update
+      patch "/:account_id", AvatarController, :update
     end
 
     scope "/events" do
@@ -43,7 +43,7 @@ defmodule BaleWeb.Router do
 
       scope "/:event_id" do
         get "/", EventController, :get
-        patch "/", EventController, :partial_update
+        patch "/", EventController, :update
         delete "/", EventController, :delete
 
         scope "/attendees/:account_id" do

@@ -83,12 +83,7 @@ defmodule BaleWeb.RelationshipControllerTest do
       |> auth_as(a)
       |> patch(~p"/api/relationships/#{a}/#{b}", %{"is_following" => false})
 
-    assert json_response(conn, 200) === %{
-             "account_id" => a,
-             "partner_id" => b,
-             "level" => "neutral",
-             "is_following" => false
-           }
+    assert json_response(conn, 404) === %{"errors" => %{"detail" => "Not Found"}}
   end
 
   test "PATCH /api/relationship/:account/:partner (existing)", %{conn: conn} do
