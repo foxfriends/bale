@@ -22,7 +22,7 @@ defmodule Bale.Events do
   alias Bale.Schema.{Attendee, Event}
 
   @spec create_event(Ecto.UUID.t(), map()) :: {:ok, Event.t()} | {:error, Ecto.Changeset.t()}
-  def create_event(host_id, defaults) do
+  def create_event(host_id, defaults \\ %{}) do
     %Event{host_id: host_id}
     |> Event.changeset(defaults)
     |> Repo.insert(returning: true)
@@ -35,8 +35,8 @@ defmodule Bale.Events do
     |> Repo.update()
   end
 
-  @spec get_event(Ecto.UUID.t()) :: {:ok, Event.t()} | {:not_found, Ecto.UUID.t()}
-  def get_event(id) do
+  @spec find_event(Ecto.UUID.t()) :: {:ok, Event.t()} | {:not_found, Ecto.UUID.t()}
+  def find_event(id) do
     case Repo.get(Event, id) do
       nil -> {:not_found, id}
       event -> {:ok, event}

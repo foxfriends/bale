@@ -6,7 +6,7 @@ defmodule BaleWeb.EventController do
   defguardp is_me(conn, account_id) when conn.assigns.account_id == account_id
 
   def get(conn, %{"event_id" => event_id}) do
-    case Events.get_event(event_id) do
+    case Events.find_event(event_id) do
       {:not_found, _} -> {:error, :not_found}
       {:ok, event} -> json(conn, Event.to_json(event))
     end
@@ -20,7 +20,7 @@ defmodule BaleWeb.EventController do
 
   def update(conn, %{"event_id" => event_id} = params) do
     with(
-      {:ok, event} when is_me(conn, event.host_id) <- Events.get_event(event_id),
+      {:ok, event} when is_me(conn, event.host_id) <- Events.find_event(event_id),
       {:ok, updated} <- Events.update_event(event, params)
     ) do
       json(conn, Event.to_json(updated))
