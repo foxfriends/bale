@@ -11,7 +11,7 @@ defmodule BaleWeb.ProfileController do
   end
 
   def create(conn, params) do
-    with {:ok, profile} <- Social.create_profile(conn.assigns.account_id(params)) do
+    with {:ok, profile} <- Social.create_profile(conn.assigns.account_id, params) do
       json(conn, Profile.to_json(profile))
     end
   end
