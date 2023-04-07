@@ -1,11 +1,11 @@
 defmodule BaleWeb.EventChannel do
   @moduledoc """
-  Channel for a event.
+  Channel for an event.
   """
 
   use Phoenix.Channel
-  alias Bale.Schema.Event
   alias Bale.Events
+  alias Bale.Schema.Event
 
   defguardp is_me(socket, host_id) when socket.assigns.account_id == host_id
 
