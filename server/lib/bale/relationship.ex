@@ -44,4 +44,24 @@ defmodule Bale.Relationship do
       relationship -> {:ok, relationship}
     end
   end
+
+  @spec is_blocked_by?(Ecto.UUID.t(), Ecto.UUID.t()) :: boolean()
+  def is_blocked_by?(partner_id, account_id) do
+    Repo.exists?(
+      from(r in Relationship,
+        where: r.account_id == ^account_id and r.partner_id == ^partner_id and r.level == :blocked
+      )
+    )
+  end
+
+  @spec is_friended_by?(Ecto.UUID.t(), Ecto.UUID.t()) :: boolean()
+  def is_friended_by?(partner_id, account_id) do
+    Repo.exists?(
+      from(r in Relationship,
+        where:
+          r.account_id == ^account_id and r.partner_id == ^partner_id and
+            (r.level == :friends or r.level == :best_friends)
+      )
+    )
+  end
 end

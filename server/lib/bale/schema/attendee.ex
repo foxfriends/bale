@@ -21,9 +21,9 @@ defmodule Bale.Schema.Attendee do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "attendees" do
-    field :state, Ecto.Enum, values: [:invited, :bailing, :undecided, :attending, :hosting]
-    belongs_to :event, Bale.Schema.Event
-    belongs_to :account, Bale.Schema.Account
+    field(:state, Ecto.Enum, values: [:invited, :bailing, :undecided, :attending, :hosting])
+    belongs_to(:event, Bale.Schema.Event)
+    belongs_to(:account, Bale.Schema.Account)
 
     timestamps()
   end
@@ -34,6 +34,7 @@ defmodule Bale.Schema.Attendee do
     |> cast(attrs, [:state])
     |> foreign_key_constraint(:account_id)
     |> foreign_key_constraint(:event_id)
+    |> unique_constraint([:account_id, :event_id], error_key: :account_id)
   end
 
   def replacing(changeset) do

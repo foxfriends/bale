@@ -18,7 +18,7 @@ defmodule BaleWeb.EventControllerTest do
              "title" => "Test Event",
              "description" => "It's going to be tested.",
              "location" => "Home",
-             "is_public" => false,
+             "is_public" => true,
              "is_joinable" => true,
              "is_subgroupable" => false,
              "host_id" => a,
@@ -37,6 +37,7 @@ defmodule BaleWeb.EventControllerTest do
       |> post(~p"/api/events/", %{"title" => "Cool Games Night"})
 
     assert %{
+             "id" => e,
              "title" => "Cool Games Night",
              "description" => "",
              "location" => "",
@@ -46,7 +47,9 @@ defmodule BaleWeb.EventControllerTest do
              "host_id" => ^a,
              "image_id" => nil,
              "occurs_at" => nil,
-             "attendees" => []
+             "attendees" => [
+               %{"account_id" => ^a, "event_id" => e, "state" => "hosting"}
+             ]
            } = json_response(conn, 200)
   end
 
@@ -60,6 +63,7 @@ defmodule BaleWeb.EventControllerTest do
       |> post(~p"/api/events/", %{"host_id" => b})
 
     assert %{
+             "id" => e,
              "title" => "",
              "description" => "",
              "location" => "",
@@ -69,7 +73,9 @@ defmodule BaleWeb.EventControllerTest do
              "host_id" => ^a,
              "image_id" => nil,
              "occurs_at" => nil,
-             "attendees" => []
+             "attendees" => [
+               %{"account_id" => ^a, "event_id" => e, "state" => "hosting"}
+             ]
            } = json_response(conn, 200)
   end
 
@@ -87,7 +93,7 @@ defmodule BaleWeb.EventControllerTest do
              "title" => "Cooler Games Night",
              "description" => "It's going to be tested.",
              "location" => "Home",
-             "is_public" => false,
+             "is_public" => true,
              "is_joinable" => true,
              "is_subgroupable" => false,
              "host_id" => a,
@@ -108,7 +114,7 @@ defmodule BaleWeb.EventControllerTest do
     assert json_response(conn, 404) === %{"errors" => %{"detail" => "Not Found"}}
   end
 
-  test "PUT /api/events/:event_id/attendees/:account_id (ok)", %{conn: conn} do
+  test "POST /api/events/:event_id/rsvp", %{conn: conn} do
     {:ok, a} = account_fixture("a", "a@example.com")
     {:ok, b} = account_fixture("b", "b@example.com")
     {:ok, %Event{id: e}} = event_fixture(a)
@@ -116,7 +122,7 @@ defmodule BaleWeb.EventControllerTest do
     conn =
       conn
       |> auth_as(b)
-      |> put(~p"/api/events/#{e}/attendees/#{b}", %{"state" => "attending"})
+      |> post(~p"/api/events/#{e}/rsvp", %{"state" => "attending"})
 
     assert json_response(conn, 200) === %{
              "event_id" => e,
@@ -125,26 +131,13 @@ defmodule BaleWeb.EventControllerTest do
            }
   end
 
-  test "PUT /api/events/:event_id/attendees/:account_id (not me)", %{conn: conn} do
-    {:ok, a} = account_fixture("a", "a@example.com")
-    {:ok, b} = account_fixture("b", "b@example.com")
-    {:ok, %Event{id: e}} = event_fixture(a)
-
-    conn =
-      conn
-      |> auth_as(a)
-      |> put(~p"/api/events/#{e}/attendees/#{b}", %{"state" => "attending"})
-
-    assert json_response(conn, 403) === %{"errors" => %{"detail" => "Forbidden"}}
-  end
-
-  test "PUT /api/events/:event_id/attendees/:account_id (no event)", %{conn: conn} do
+  test "POST /api/events/:event_id/rsvp (not found)", %{conn: conn} do
     {:ok, a} = account_fixture("a", "a@example.com")
 
     conn =
       conn
       |> auth_as(a)
-      |> put(~p"/api/events/#{a}/attendees/#{a}", %{"state" => "attending"})
+      |> post(~p"/api/events/#{a}/rsvp", %{"state" => "attending"})
 
     assert json_response(conn, 404) === %{"errors" => %{"detail" => "Not Found"}}
   end

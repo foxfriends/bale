@@ -8,7 +8,7 @@ defmodule BaleWeb.EventFixtures do
         title \\ "Test Event",
         description \\ "It's going to be tested.",
         location \\ "Home",
-        is_public \\ false,
+        is_public \\ true,
         is_joinable \\ true,
         is_subgroupable \\ false,
         image_id \\ nil,

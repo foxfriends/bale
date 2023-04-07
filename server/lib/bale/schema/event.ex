@@ -41,7 +41,8 @@ defmodule Bale.Schema.Event do
     belongs_to :host, Bale.Schema.Account
     belongs_to :image, Bale.Schema.Image
 
-    many_to_many :attendees, Bale.Schema.Account, join_through: Bale.Schema.Attendee
+    many_to_many :accounts, Bale.Schema.Account, join_through: Bale.Schema.Attendee
+    has_many :attendees, Bale.Schema.Attendee
 
     timestamps()
   end

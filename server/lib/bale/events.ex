@@ -18,14 +18,42 @@ defmodule Bale.Events do
   later, for now permissions are just those three.
   """
 
-  alias Bale.Repo
+  alias Bale.{Relationship, Repo}
   alias Bale.Schema.{Attendee, Event}
+  import Ecto.Query
+
+  @spec is_attendee?(Event.t(), Ecto.UUID.t()) :: boolean()
+  def is_attendee?(event, account_id) do
+    Repo.exists?(
+      from(a in Attendee, where: a.account_id == ^account_id and a.event_id == ^event.id)
+    )
+  end
+
+  @spec can_view?(Event.t(), Ecto.UUID.t()) :: boolean()
+
+  def can_view?(event, account_id) when event.host_id == account_id, do: true
+
+  def can_view?(event, account_id) when event.is_public do
+    is_attendee?(event, account_id) or
+      not Relationship.is_blocked_by?(account_id, event.host_id)
+  end
+
+  def can_view?(event, account_id) do
+    is_attendee?(event, account_id) or
+      not Relationship.is_friended_by?(account_id, event.host_id)
+  end
 
   @spec create_event(Ecto.UUID.t(), map()) :: {:ok, Event.t()} | {:error, Ecto.Changeset.t()}
   def create_event(host_id, defaults \\ %{}) do
-    %Event{host_id: host_id}
-    |> Event.changeset(defaults)
-    |> Repo.insert(returning: true)
+    with(
+      {:ok, event} <-
+        %Event{host_id: host_id}
+        |> Event.changeset(defaults)
+        |> Repo.insert(returning: true)
+    ) do
+      rsvp(event, host_id, :hosting)
+      {:ok, event}
+    end
   end
 
   @spec update_event(Event.t(), map()) :: {:ok, Event.t()} | {:error, Ecto.Changeset.t()}
@@ -43,17 +71,31 @@ defmodule Bale.Events do
     end
   end
 
-  @spec replace_attendee(Ecto.UUID.t(), Ecto.UUID.t(), map()) ::
-          {:ok, Attendee.t()} | {:error, Ecto.Changeset.t()} | {:error, :not_found}
-  def replace_attendee(account_id, event_id, changes) do
-    %Attendee{account_id: account_id, event_id: event_id}
-    |> Attendee.changeset(changes)
-    |> Attendee.replacing()
+  @spec invite(Event.t(), Ecto.UUID.t()) :: {:ok, Attendee.t()} | {:error, :conflict}
+  def invite(event, account_id) do
+    %Attendee{account_id: account_id, event_id: event.id}
+    |> Attendee.changeset(%{state: :invited})
+    |> Repo.insert()
+    |> Repo.detect_conflict(:account_id)
+  end
+
+  @spec rsvp(Event.t(), Ecto.UUID.t(), Attendee.state()) :: {:ok, Attendee.t()}
+  def rsvp(event, account_id, state) do
+    %Attendee{account_id: account_id, event_id: event.id}
+    |> Attendee.changeset(%{state: state})
     |> Repo.insert(
       on_conflict: {:replace, [:state]},
       conflict_target: [:account_id, :event_id],
       returning: true
     )
-    |> Repo.detect_missing(:event_id)
+  end
+
+  @spec leave(Event.t(), Ecto.UUID.t()) :: :ok
+  def leave(event, account_id) do
+    Repo.delete_all(
+      from a in Attendee, where: a.account_id == ^account_id and a.event_id == ^event.id
+    )
+
+    :ok
   end
 end

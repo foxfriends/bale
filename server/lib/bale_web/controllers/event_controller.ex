@@ -3,7 +3,7 @@ defmodule BaleWeb.EventController do
   alias Bale.Events
   alias Bale.Schema.{Attendee, Event}
 
-  defguardp is_me(conn, account_id) when conn.assigns.account_id == account_id
+  defguardp is_host(conn, event) when conn.assigns.account_id == event.host_id
 
   def get(conn, %{"event_id" => event_id}) do
     case Events.find_event(event_id) do
@@ -20,7 +20,7 @@ defmodule BaleWeb.EventController do
 
   def update(conn, %{"event_id" => event_id} = params) do
     with(
-      {:ok, event} when is_me(conn, event.host_id) <- Events.find_event(event_id),
+      {:ok, event} when is_host(conn, event) <- Events.find_event(event_id),
       {:ok, updated} <- Events.update_event(event, params)
     ) do
       json(conn, Event.to_json(updated))
@@ -33,16 +33,44 @@ defmodule BaleWeb.EventController do
     Ecto.InvalidChangesetError -> {:error, :bad_request}
   end
 
-  def replace_attendee(conn, %{"event_id" => event_id, "account_id" => account_id} = params)
-      when is_me(conn, account_id) do
-    case Events.replace_attendee(account_id, event_id, params) do
-      {:ok, attendee} -> json(conn, Attendee.to_json(attendee))
-      {:error, :not_found} -> {:error, :not_found}
-      {:error, _} -> {:error, :bad_request}
+  def rsvp(conn, %{"event_id" => event_id, "state" => state}) do
+    with(
+      {:ok, event} <- Events.find_event(event_id),
+      true <- Events.can_view?(event, conn.assigns.account_id),
+      {:ok, attendee} <- Events.rsvp(event, conn.assigns.account_id, state)
+    ) do
+      json(conn, Attendee.to_json(attendee))
+    else
+      _ -> {:error, :not_found}
     end
   rescue
     Ecto.InvalidChangesetError -> {:error, :bad_request}
   end
 
-  def replace_attendee(_, _), do: {:error, :forbidden}
+  def invite(conn, %{"event_id" => event_id, "account_id" => account_id}) do
+    with(
+      {:ok, event} when is_host(conn, event) <- Events.find_event(event_id),
+      {:ok, attendee} <- Events.invite(event, account_id)
+    ) do
+      json(conn, Attendee.to_json(attendee))
+    else
+      _ -> {:error, :not_found}
+    end
+  end
+
+  def leave(conn, %{"event_id" => event_id}) do
+    with {:ok, event} <- Events.find_event(event_id) do
+      Events.leave(event, conn.assigns.account_id)
+    end
+
+    conn |> put_status(204)
+  end
+
+  def kick(conn, %{"event_id" => event_id, "account_id" => account_id}) do
+    with {:ok, event} when is_host(conn, event) <- Events.find_event(event_id) do
+      Events.leave(event, account_id)
+    end
+
+    conn |> put_status(204)
+  end
 end
