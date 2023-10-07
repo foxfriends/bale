@@ -43,6 +43,7 @@ jobs:
       - run: npm run check
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -50,5 +51,12 @@ jobs:
           node-version: 18
           cache: 'npm'
       - run: npm ci
+      - run: npx playwright install --with-deps
       - run: cp .env.example .env
       - run: npm test
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
