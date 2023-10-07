@@ -1,3 +1,3 @@
 # Bale
 
-Don't bail on your friends. 
+Don't bail on your friends.
