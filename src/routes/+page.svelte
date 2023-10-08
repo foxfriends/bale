@@ -114,6 +114,7 @@
     grid-column: 1 / -1;
     grid-row: shore;
     background-color: rgb(var(--rgb-water));
+    padding-block: var(--64);
   }
 
   .waterline {
