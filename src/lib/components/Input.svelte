@@ -4,9 +4,10 @@
   input {
     background-color: rgb(var(--rgb-cloud));
     padding: 0 var(--8);
-    color: var(--color-black);
+    color: rgb(var(--rgb-black));
     height: var(--44);
-    width: var(--input-width, var(--phrase));
+    width: 100%;
+    max-width: var(--input-width, var(--360));
     font-size: var(--font-base);
     font-weight: var(--font-bold);
     border-radius: var(--radius-sm);

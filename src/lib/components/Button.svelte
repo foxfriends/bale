@@ -10,7 +10,8 @@
     border-radius: calc(var(--44) / 2);
     cursor: pointer;
     height: var(--44);
-    width: var(--button-width, var(--phrase));
+    width: 100%;
+    max-width: var(--button-width, var(--360));
     font-weight: var(--font-bold);
   }
 </style>

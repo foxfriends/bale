@@ -3,12 +3,19 @@
   import TextButton from "$lib/components/TextButton.svelte";
   import Input from "$lib/components/Input.svelte";
   import Button from "$lib/components/Button.svelte";
+  import Waterline from "$lib/components/Waterline.svelte";
 
   let currentForm = "signup";
 </script>
 
 <main>
   <div class="fold" />
+  <div class="waterline wide">
+    <Waterline shape={[8.5, 8, 7, 1, 0, -1]} width={24} />
+  </div>
+  <div class="waterline narrow">
+    <Waterline shape={[1, 2, 1, 2, 2]} width={24} />
+  </div>
 
   <article class="catch">
     <header>
@@ -22,7 +29,7 @@
       <p>It’s nice to see other people, you don&apos;t always need an occasion</p>
     </section>
 
-    <footer>
+    <footer class="wide">
       <h3>Everyone&apos;s waiting, jump right in</h3>
     </footer>
   </article>
@@ -60,18 +67,33 @@
       <div class="note">(Don&apos;t worry, everything can be changed)</div>
     </aside>
   {/if}
+
+  <div class="underwater">
+    <article class="catch">
+      <section class="hook">
+        <p>Time is best spent with friends</p>
+        <p>You don’t have to do much, it’s just good to be together</p>
+      </section>
+
+      <section class="hook">
+        <p>Getting everyone together can be hard.</p>
+        <p>Sometimes you just have to put something out there and see who comes</p>
+        <p>It’s nice to see other people, you don&apos;t always need an occasion</p>
+      </section>
+    </article>
+  </div>
 </main>
 
 <style>
   /* Layout */
   main {
-    overflow-x: hidden;
     display: grid;
-    grid-template-rows: [catch] 1fr [form] auto [fold catch-end] auto [end];
+    grid-template-rows: [catch] 1fr [form] auto [fold catch-end] var(--64) [shore] auto;
     grid-template-columns: [catch] 1fr [form] auto;
   }
 
   .fold {
+    grid-column: 1 / -1;
     grid-row: 1 / fold;
     height: 100vh;
   }
@@ -82,8 +104,21 @@
   }
 
   .form {
+    position: sticky;
+    top: calc(0px - var(--48));
     grid-column: form;
     grid-row: form;
+  }
+
+  .underwater {
+    grid-column: 1 / -1;
+    grid-row: shore;
+    background-color: rgb(var(--rgb-water));
+  }
+
+  .waterline {
+    grid-column: 1 / -1;
+    grid-row: form / shore;
   }
 
   /* Catch */
@@ -91,7 +126,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--64);
+    gap: var(--48);
     padding: var(--64);
     max-width: var(--narrow);
     font-size: var(--font-xl);
@@ -125,14 +160,14 @@
   }
 
   /* Form */
-
   .form {
     overflow-x: visible;
     display: grid;
-    grid-template-columns: var(--64) [start] auto [end] var(--64);
+    grid-template-columns: var(--64) [start] 1fr [end] var(--64);
     grid-template-rows: [switcher] auto [header] auto [form] auto [note] auto;
+    width: 100%;
     place-self: end;
-    padding-bottom: var(--64);
+    padding: var(--96) 0 var(--64) 0;
   }
 
   .switcher {
@@ -146,9 +181,11 @@
   }
   .left {
     align-items: flex-start;
+    text-align: start;
   }
   .right {
     align-items: flex-end;
+    text-align: end;
   }
 
   .form h2 {
@@ -165,6 +202,7 @@
     gap: var(--24);
     padding-top: var(--24);
     padding-bottom: var(--8);
+    width: var(--360);
   }
 
   .note {
@@ -175,27 +213,63 @@
     text-align: center;
   }
 
-  @media (max-width: 120ch) {
-    article {
-      padding: var(--48);
-    }
+  .narrow {
+    display: none;
+  }
 
+  @media (max-width: 120ch) {
     h1 {
       font-size: var(--font-xl);
     }
 
-    h2 {
+    h2,
+    .hook,
+    .catch {
       font-size: var(--font-lg);
     }
 
     .hook,
-    footer {
-      display: none;
+    header {
+      flex-grow: 0;
+    }
+
+    .catch {
+      margin-inline: auto;
     }
 
     main {
       grid-template-columns: [catch form] auto;
-      grid-template-rows: [catch] 1fr [form] auto [fold];
+      grid-template-rows: [catch] 1fr [catch-end form] auto [fold] auto;
+    }
+
+    main > * {
+      min-width: 0;
+    }
+
+    .form {
+      grid-template-columns: [start] auto [end];
+      padding-inline: var(--24);
+      padding-block-end: var(--16);
+      margin-inline: auto;
+    }
+
+    form,
+    .switcher {
+      margin-inline: auto;
+      width: 100%;
+      max-width: var(--360);
+    }
+
+    .catch {
+      padding: var(--24);
+    }
+
+    .narrow {
+      display: block;
+    }
+
+    .wide {
+      display: none;
     }
   }
 </style>

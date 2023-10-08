@@ -12,7 +12,7 @@
      * Feels like a hack but let's roll with it for now.
      **/
     padding: var(--4);
-    margin: calc(0 - var(--4));
+    margin: calc(0px - var(--4));
     cursor: pointer;
   }
 
