@@ -4,6 +4,7 @@
   import Input from "$lib/components/Input.svelte";
   import Button from "$lib/components/Button.svelte";
   import Waterline from "$lib/components/Waterline.svelte";
+  import { prefersReducedMotion } from "$lib/stores/prefersReducedMotion";
 
   let currentForm = "signup";
 </script>
@@ -11,10 +12,10 @@
 <main>
   <div class="fold" />
   <div class="waterline wide">
-    <Waterline shape={[8.5, 8, 7, 1, 0, -1]} width={24} />
+    <Waterline shape={[8.5, 8, 7, 1, 0, -1]} width={24} flow={$prefersReducedMotion ? 0 : 0.2} />
   </div>
   <div class="waterline narrow">
-    <Waterline shape={[1, 2, 1, 2, 2]} width={24} />
+    <Waterline shape={[1, 2, 1, 2, 2]} width={24} flow={$prefersReducedMotion ? 0 : 0.2} />
   </div>
 
   <article class="catch">
@@ -35,7 +36,7 @@
   </article>
 
   {#if currentForm === "login"}
-    <aside class="form" transition:fly={{ x: -48, opacity: 0 }}>
+    <aside class="form" transition:fly={{ x: $prefersReducedMotion ? 0 : -48, opacity: 0 }}>
       <div class="switcher left">
         <TextButton on:click={() => (currentForm = "signup")}>&larr; I need an account</TextButton>
       </div>
@@ -51,7 +52,7 @@
     </aside>
   {/if}
   {#if currentForm === "signup"}
-    <aside class="form" transition:fly={{ x: 48, opacity: 0 }}>
+    <aside class="form" transition:fly={{ x: $prefersReducedMotion ? 0 : 48, opacity: 0 }}>
       <div class="switcher right">
         <TextButton on:click={() => (currentForm = "login")}>
           I&apos;ve been here before &rarr;
