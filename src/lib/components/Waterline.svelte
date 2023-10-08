@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { browser } from "$app/environment";
   import { onMount } from "svelte";
 
   export let shape: [number, number, ...number[]];

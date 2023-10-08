@@ -18,6 +18,7 @@ module.exports = {
     es2017: true,
     node: true,
   },
+  globals: { DOMHighResTimeStamp: "readable" },
   overrides: [
     {
       files: ["*.svelte"],
