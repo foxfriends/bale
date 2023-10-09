@@ -16,3 +16,7 @@ export function error(
 ) {
   return kit.error(status, { code, message, context });
 }
+
+export function notFound(message: string, model: string, context = {}) {
+  return error(404, { code: "NotFound", message, context: { model, ...context } });
+}

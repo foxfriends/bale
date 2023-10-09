@@ -1,12 +1,50 @@
 <script lang="ts">
   import { fly } from "svelte/transition";
+  import { page } from "$app/stores";
   import TextButton from "$lib/components/TextButton.svelte";
   import Input from "$lib/components/Input.svelte";
   import Button from "$lib/components/Button.svelte";
   import Waterline from "$lib/components/Waterline.svelte";
+  import Field from "$lib/components/Field.svelte";
   import { prefersReducedMotion } from "$lib/stores/prefersReducedMotion";
+  import { enhance } from "$app/forms";
+  import type { SubmitFunction } from "./$types";
 
-  let currentForm = "signup";
+  let currentForm: "signup" | "signin" =
+    $page.error?.context.form === "signin" ? "signin" : "signup";
+
+  let username = "";
+  let password = "";
+  let email = "";
+
+  let isSubmitting = false;
+  const handleForm: SubmitFunction = () => {
+    isSubmitting = true;
+
+    return ({ update }) => {
+      isSubmitting = false;
+      update();
+    };
+  };
+
+  let loginUsernameError: string | undefined;
+  let loginPasswordError: string | undefined;
+
+  $: if (currentForm === "signin") {
+    loginUsernameError = undefined;
+    loginPasswordError = undefined;
+
+    if ($page.error?.code === "NotFound") {
+      if ($page.error.context.model === "Account") {
+        loginUsernameError = "We don't know anyone with this username";
+      }
+      if ($page.error.context.model === "Password") {
+        loginPasswordError = "This account doesn't seem to have a password";
+      }
+    } else if ($page.error?.code === "InvalidCredentials") {
+      loginPasswordError = "This is not the correct password";
+    }
+  }
 </script>
 
 <main>
@@ -35,16 +73,20 @@
     </footer>
   </article>
 
-  {#if currentForm === "login"}
+  {#if currentForm === "signin"}
     <aside class="form" transition:fly={{ x: $prefersReducedMotion ? 0 : -48, opacity: 0 }}>
       <div class="switcher left">
         <TextButton on:click={() => (currentForm = "signup")}>&larr; I need an account</TextButton>
       </div>
       <h2>Nice to see you again</h2>
-      <form method="POST">
-        <Input type="text" placeholder="Username" name="username" />
-        <Input type="password" placeholder="Password" name="password" />
-        <Button>Sign in</Button>
+      <form method="POST" action="?/signin" use:enhance={handleForm}>
+        <Field error={loginUsernameError}>
+          <Input type="text" placeholder="Username" name="username" bind:value={username} />
+        </Field>
+        <Field error={loginPasswordError}>
+          <Input type="password" placeholder="Password" name="password" bind:value={password} />
+        </Field>
+        <Button active={isSubmitting} error={!!$page.error}>Sign in</Button>
       </form>
       <div class="note">
         <TextButton>I forgot my password...</TextButton>
@@ -54,16 +96,16 @@
   {#if currentForm === "signup"}
     <aside class="form" transition:fly={{ x: $prefersReducedMotion ? 0 : 48, opacity: 0 }}>
       <div class="switcher right">
-        <TextButton on:click={() => (currentForm = "login")}>
+        <TextButton on:click={() => (currentForm = "signin")}>
           I&apos;ve been here before &rarr;
         </TextButton>
       </div>
       <h2>What are you waiting for?</h2>
-      <form method="POST">
-        <Input type="text" placeholder="Username" name="username" />
-        <Input type="email" placeholder="E-mail" name="email" />
-        <Input type="password" placeholder="Password" name="password" />
-        <Button>Sign Up</Button>
+      <form method="POST" action="?/signup" use:enhance={handleForm}>
+        <Input type="text" placeholder="Username" name="username" bind:value={username} />
+        <Input type="email" placeholder="E-mail" name="email" bind:value={email} />
+        <Input type="password" placeholder="Password" name="password" bind:value={password} />
+        <Button active={isSubmitting} error={!!$page.error}>Sign Up</Button>
       </form>
       <div class="note">(Don&apos;t worry, everything can be changed)</div>
     </aside>
