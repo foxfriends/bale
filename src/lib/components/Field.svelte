@@ -1,15 +1,21 @@
 <script lang="ts">
   import Blinker from "./Blinker.svelte";
+  import Tooltip from "./Tooltip.svelte";
 
   export let error: string | undefined = undefined;
 </script>
 
 <label>
-  <slot name="label" />
   <slot />
+
   {#if error !== undefined}
     <div class="indicator">
-      <Blinker style="error" />
+      <Tooltip>
+        <div slot="tip">
+          {error}
+        </div>
+        <Blinker style="error" />
+      </Tooltip>
     </div>
   {/if}
 </label>
