@@ -1,8 +1,9 @@
 <script lang="ts">
   export let style: "error" | "attention" = "attention";
+  export let seen = false;
 </script>
 
-<div class="blinker">
+<div class="blinker" class:seen>
   <div class="target {style}" />
 </div>
 
@@ -15,9 +16,12 @@
   .target {
     width: var(--8);
     height: var(--8);
-    animation: blinker 2s infinite;
     background-color: rgb(var(--blinker-color));
     border-radius: 100%;
+  }
+
+  .blinker:not(.seen) .target {
+    animation: blinker 2s infinite;
   }
 
   @media (prefers-reduced-motion) {

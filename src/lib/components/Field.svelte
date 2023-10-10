@@ -3,18 +3,24 @@
   import Tooltip from "./Tooltip.svelte";
 
   export let error: string | undefined = undefined;
+
+  let tooltipOpen = false;
+
+  let tooltipSeen = false;
+  $: tooltipSeen = tooltipSeen || tooltipOpen;
 </script>
 
-<label>
+<label on:focusin={() => (tooltipOpen = true)} on:focusout={() => (tooltipOpen = false)}>
   <slot />
 
   {#if error !== undefined}
     <div class="indicator">
-      <Tooltip>
+      <Tooltip bind:open={tooltipOpen}>
+        <Blinker style="error" seen={tooltipSeen} />
+
         <div slot="tip">
           {error}
         </div>
-        <Blinker style="error" />
       </Tooltip>
     </div>
   {/if}

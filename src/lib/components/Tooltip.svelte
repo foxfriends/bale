@@ -2,7 +2,7 @@
   import { browser } from "$app/environment";
   import { getPortal } from "$lib/actions/portal";
   import { writable } from "svelte/store";
-  import { fly } from "svelte/transition";
+  import { fly, scale } from "svelte/transition";
   import { prefersReducedMotion } from "$lib/stores/prefersReducedMotion";
   import { scrollOffset } from "$lib/util/scrollOffset";
 
@@ -17,9 +17,7 @@
   $: if (open && anchor) {
     const { x, width, y } = anchor.getBoundingClientRect();
     const { x: scrollX, y: scrollY } = scrollOffset(anchor);
-    console.log(scrollX, scrollY);
     target = { x: x + scrollX + width / 2, y: y + scrollY - 4 };
-    console.log(anchor, target);
   }
 </script>
 
@@ -36,7 +34,7 @@
 {#if open && target}
   <div
     use:portal
-    transition:fly={{ y: $prefersReducedMotion ? 0 : 10, opacity: 0, duration: 100 }}
+    transition:scale={{ start: $prefersReducedMotion ? 1 : 0.95, opacity: 0, duration: 100 }}
     class="tooltip {style}"
     role="tooltip"
     id={label}
