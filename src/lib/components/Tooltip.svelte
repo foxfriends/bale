@@ -4,7 +4,9 @@
   import { writable } from "svelte/store";
   import { fly, scale } from "svelte/transition";
   import { prefersReducedMotion } from "$lib/stores/prefersReducedMotion";
+  import { intersectionObserver } from "$lib/stores/intersectionObserver";
   import { scrollOffset } from "$lib/util/scrollOffset";
+  import { onMount } from "svelte";
 
   const label = browser ? window.crypto.randomUUID() : undefined;
   const portal = getPortal();
@@ -19,6 +21,14 @@
     const { x: scrollX, y: scrollY } = scrollOffset(anchor);
     target = { x: x + scrollX + width / 2, y: y + scrollY - 4 };
   }
+
+  const tooltip = writable<HTMLDivElement | null>(null);
+  const intersection = intersectionObserver(tooltip);
+
+  $: overlap = 100 * (1 - ($intersection[0]?.intersectionRatio || 1));
+  $: shift = overlap
+    ? `transform: translateX(calc(0px - ${overlap}% - 1rem))`
+    : "transform: translateX(0)";
 </script>
 
 <div
@@ -41,8 +51,10 @@
     style="left: {target.x}px; top: {target.y}px;"
   >
     <div class="tip-arrow" />
-    <div class="tip-content">
-      <slot name="tip" />
+    <div class="tip-content-wrapper" bind:this={$tooltip}>
+      <div class="tip-content" style={shift}>
+        <slot name="tip" />
+      </div>
     </div>
   </div>
 {/if}
@@ -58,14 +70,18 @@
     pointer-events: none;
   }
 
-  .tip-content {
-    background-color: rgb(var(--tip-color));
-    border-radius: var(--radius-sm);
+  .tip-content-wrapper {
     position: absolute;
     left: 50%;
     bottom: 0;
     transform: translate(-50%, 0);
+  }
+
+  .tip-content {
+    background-color: rgb(var(--tip-color));
+    border-radius: var(--radius-sm);
     width: max-content;
+    transition: 0.2s transform 50ms;
   }
 
   .tip-arrow {
