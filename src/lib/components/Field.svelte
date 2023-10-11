@@ -16,7 +16,7 @@
       <Tooltip bind:open={tooltipOpen}>
         <Blinker style="error" seen />
 
-        <div slot="tip">
+        <div slot="tip" class="tip">
           {error}
         </div>
       </Tooltip>
@@ -33,5 +33,11 @@
     position: absolute;
     top: var(--4);
     right: var(--4);
+  }
+
+  .tip {
+    color: rgb(var(--rgb-cloud));
+    padding: var(--8);
+    font-weight: 500;
   }
 </style>
