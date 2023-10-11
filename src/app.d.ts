@@ -10,7 +10,7 @@ declare global {
     interface Error {
       code: string;
       message: string;
-      context: Record<string, unknown>;
+      context: unknown;
     }
 
     interface Locals {

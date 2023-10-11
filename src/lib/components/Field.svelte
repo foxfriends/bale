@@ -2,15 +2,16 @@
   import Blinker from "./Blinker.svelte";
   import Tooltip from "./Tooltip.svelte";
 
-  export let error: string | undefined = undefined;
+  export let error: string | undefined | null = undefined;
 
   let tooltipOpen = true;
+  $: tooltipOpen = !!error;
 </script>
 
 <label on:focusin={() => (tooltipOpen = true)} on:focusout={() => (tooltipOpen = false)}>
   <slot />
 
-  {#if error !== undefined}
+  {#if error}
     <div class="indicator">
       <Tooltip bind:open={tooltipOpen}>
         <Blinker style="error" seen />

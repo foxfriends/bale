@@ -1,6 +1,8 @@
 <script lang="ts">
   import { fly } from "svelte/transition";
   import { page } from "$app/stores";
+  import { coalesce } from "$lib/util/coalesce";
+  import { matchError } from "$lib/util/matchError";
   import TextButton from "$lib/components/TextButton.svelte";
   import Input from "$lib/components/Input.svelte";
   import Button from "$lib/components/Button.svelte";
@@ -11,7 +13,12 @@
   import type { SubmitFunction } from "./$types";
 
   let currentForm: "signup" | "signin" =
-    $page.error?.context.form === "signin" ? "signin" : "signup";
+    $page.error?.context &&
+    typeof $page.error?.context === "object" &&
+    "form" in $page.error.context &&
+    $page.error.context?.form === "signin"
+      ? "signin"
+      : "signup";
 
   let username = "";
   let password = "";
@@ -27,59 +34,48 @@
     };
   };
 
-  let loginUsernameError: string | undefined;
-  let loginPasswordError: string | undefined;
-
-  let signupUsernameError: string | undefined;
-  let signupEmailError: string | undefined;
-  let signupPasswordError: string | undefined;
-
-  $: password, (loginPasswordError = signupPasswordError = undefined);
-  $: username, (loginUsernameError = signupUsernameError = undefined);
-  $: email, (signupEmailError = undefined);
-
-  $: {
-    loginUsernameError = undefined;
-    loginPasswordError = undefined;
-    signupUsernameError = undefined;
-    signupPasswordError = undefined;
-    signupEmailError = undefined;
-
-    if ($page.error) {
-      if (currentForm === "signin") {
-        if ($page.error.code === "NotFound") {
-          if ($page.error.context.model === "Account") {
-            loginUsernameError = "We don't know anyone with this username";
-          }
-          if ($page.error.context.model === "Password") {
-            loginPasswordError = "This account doesn't seem to have a password";
-          }
-        } else if ($page.error.code === "InvalidCredentials") {
-          loginPasswordError = "This is not the correct password";
-        }
-      } else if (currentForm === "signup") {
-        if ($page.error.code === "ValidationError") {
-          const { details } = $page.error.context as { details: Record<string, string> };
-          if (details.username?.includes("ConstraintNotEmpty")) {
-            signupUsernameError = "Username may not be empty";
-          }
-          if (details.password?.includes("ConstraintNotEmpty")) {
-            signupPasswordError = "Password may not be empty";
-          }
-          if (details.email?.includes("ConstraintNotEmpty")) {
-            signupEmailError = "E-mail may not be empty";
-          }
-        } else if ($page.error.code === "AccountExists") {
-          if ($page.error.context?.username) {
-            signupUsernameError = "This username is already in use";
-          }
-          if ($page.error.context?.email) {
-            signupEmailError = "This e-mail address is already in use";
-          }
-        }
-      }
-    }
+  function constraintNotEmpty(s: unknown) {
+    return typeof s === "string" && s.includes("ConstraintNotEmpty");
   }
+
+  let loginUsernameError: string | null = null;
+  let loginPasswordError: string | null = null;
+  let signupUsernameError: string | null = null;
+  let signupEmailError: string | null = null;
+  let signupPasswordError: string | null = null;
+  $: password, (loginPasswordError = signupPasswordError = null);
+  $: username, (loginUsernameError = signupUsernameError = null);
+  $: email, (signupEmailError = null);
+  $: loginUsernameError = matchError(
+    "NotFound",
+    { model: "Account" },
+    "We don't know anyone with this username",
+  )($page.error);
+  $: loginPasswordError = coalesce(
+    matchError("InvalidCredentials", {}, "This is not the correct password"),
+    matchError("NotFound", { model: "Password" }, "This account doesn't seem to have a password"),
+  )($page.error);
+  $: signupUsernameError = coalesce(
+    matchError(
+      "ValidationError",
+      { details: { username: constraintNotEmpty } },
+      "Username may not be empty",
+    ),
+    matchError("AccountExists", { username: Boolean }, "This username is already in use"),
+  )($page.error);
+  $: signupPasswordError = matchError(
+    "ValidationError",
+    { details: { password: constraintNotEmpty } },
+    "Password may not be empty",
+  )($page.error);
+  $: signupEmailError = coalesce(
+    matchError(
+      "ValidationError",
+      { details: { email: constraintNotEmpty } },
+      "E-mail may not be empty",
+    ),
+    matchError("AccountExists", { email: Boolean }, "This e-mail address is already in use"),
+  )($page.error);
 </script>
 
 <main>
