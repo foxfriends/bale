@@ -4,10 +4,7 @@
 
   export let error: string | undefined = undefined;
 
-  let tooltipOpen = false;
-
-  let tooltipSeen = false;
-  $: tooltipSeen = tooltipSeen || tooltipOpen;
+  let tooltipOpen = true;
 </script>
 
 <label on:focusin={() => (tooltipOpen = true)} on:focusout={() => (tooltipOpen = false)}>
@@ -16,7 +13,7 @@
   {#if error !== undefined}
     <div class="indicator">
       <Tooltip bind:open={tooltipOpen}>
-        <Blinker style="error" seen={tooltipSeen} />
+        <Blinker style="error" seen />
 
         <div slot="tip">
           {error}

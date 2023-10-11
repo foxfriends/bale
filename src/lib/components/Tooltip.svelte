@@ -25,7 +25,7 @@
   const tooltip = writable<HTMLDivElement | null>(null);
   const intersection = intersectionObserver(tooltip);
 
-  $: overlap = 100 * (1 - ($intersection[0]?.intersectionRatio || 1));
+  $: overlap = 100 * (1 - ($intersection?.[0]?.intersectionRatio || 1));
   $: shift = overlap
     ? `transform: translateX(calc(0px - ${overlap}% - 1rem))`
     : "transform: translateX(0)";

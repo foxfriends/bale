@@ -30,19 +30,54 @@
   let loginUsernameError: string | undefined;
   let loginPasswordError: string | undefined;
 
-  $: if (currentForm === "signin") {
+  let signupUsernameError: string | undefined;
+  let signupEmailError: string | undefined;
+  let signupPasswordError: string | undefined;
+
+  $: password, (loginPasswordError = signupPasswordError = undefined);
+  $: username, (loginUsernameError = signupUsernameError = undefined);
+  $: email, (signupEmailError = undefined);
+
+  $: {
     loginUsernameError = undefined;
     loginPasswordError = undefined;
+    signupUsernameError = undefined;
+    signupPasswordError = undefined;
+    signupEmailError = undefined;
 
-    if ($page.error?.code === "NotFound") {
-      if ($page.error.context.model === "Account") {
-        loginUsernameError = "We don't know anyone with this username";
+    if ($page.error) {
+      if (currentForm === "signin") {
+        if ($page.error.code === "NotFound") {
+          if ($page.error.context.model === "Account") {
+            loginUsernameError = "We don't know anyone with this username";
+          }
+          if ($page.error.context.model === "Password") {
+            loginPasswordError = "This account doesn't seem to have a password";
+          }
+        } else if ($page.error.code === "InvalidCredentials") {
+          loginPasswordError = "This is not the correct password";
+        }
+      } else if (currentForm === "signup") {
+        if ($page.error.code === "ValidationError") {
+          const { details } = $page.error.context as { details: Record<string, string> };
+          if (details.username?.includes("ConstraintNotEmpty")) {
+            signupUsernameError = "Username may not be empty";
+          }
+          if (details.password?.includes("ConstraintNotEmpty")) {
+            signupPasswordError = "Password may not be empty";
+          }
+          if (details.email?.includes("ConstraintNotEmpty")) {
+            signupEmailError = "E-mail may not be empty";
+          }
+        } else if ($page.error.code === "AccountExists") {
+          if ($page.error.context?.username) {
+            signupUsernameError = "This username is already in use";
+          }
+          if ($page.error.context?.email) {
+            signupEmailError = "This e-mail address is already in use";
+          }
+        }
       }
-      if ($page.error.context.model === "Password") {
-        loginPasswordError = "This account doesn't seem to have a password";
-      }
-    } else if ($page.error?.code === "InvalidCredentials") {
-      loginPasswordError = "This is not the correct password";
     }
   }
 </script>
@@ -102,9 +137,15 @@
       </div>
       <h2>What are you waiting for?</h2>
       <form method="POST" action="?/signup" use:enhance={handleForm}>
-        <Input type="text" placeholder="Username" name="username" bind:value={username} />
-        <Input type="email" placeholder="E-mail" name="email" bind:value={email} />
-        <Input type="password" placeholder="Password" name="password" bind:value={password} />
+        <Field error={signupUsernameError}>
+          <Input type="text" placeholder="Username" name="username" bind:value={username} />
+        </Field>
+        <Field error={signupEmailError}>
+          <Input type="email" placeholder="E-mail" name="email" bind:value={email} />
+        </Field>
+        <Field error={signupPasswordError}>
+          <Input type="password" placeholder="Password" name="password" bind:value={password} />
+        </Field>
         <Button active={isSubmitting} error={!!$page.error}>Sign Up</Button>
       </form>
       <div class="note">(Don&apos;t worry, everything can be changed)</div>

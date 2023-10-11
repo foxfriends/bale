@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import { DATABASE_URL, LOG_LEVEL } from "$env/static/private";
 import pino from "pino";
 import type { Handle, HandleServerError } from "@sveltejs/kit";
@@ -7,8 +7,20 @@ import { error } from "$lib/server/response";
 import { ValidationError } from "runtypes";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
-const client = new PrismaClient({ datasourceUrl: DATABASE_URL });
 const logger = pino({ level: LOG_LEVEL });
+const client = new PrismaClient({
+  datasourceUrl: DATABASE_URL,
+  log: [
+    { emit: "event", level: "query" },
+    { emit: "event", level: "error" },
+    { emit: "event", level: "info" },
+    { emit: "event", level: "warn" },
+  ],
+});
+client.$on("query", (event: Prisma.QueryEvent) => logger.trace(event, "%s", event.query));
+client.$on("error", (event: Prisma.LogEvent) => logger.error(event, "%s", event.message));
+client.$on("info", (event: Prisma.LogEvent) => logger.info(event, "%s", event.message));
+client.$on("warn", (event: Prisma.LogEvent) => logger.warn(event, "%s", event.message));
 
 export async function handle({ event, resolve }: Parameters<Handle>[0]): Promise<Response> {
   event.locals.id = randomUUID();

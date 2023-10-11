@@ -1,8 +1,9 @@
-import { redirect } from "@sveltejs/kit";
+import { json, redirect } from "@sveltejs/kit";
 import { compare, hash } from "bcrypt";
-import type { Actions } from "./$types";
 import { Record, String } from "runtypes";
 import { error, notFound } from "$lib/server/response";
+import type { Actions } from "./$types";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 const SignInRequestBody = Record({
   username: String,
@@ -10,9 +11,9 @@ const SignInRequestBody = Record({
 });
 
 const SignUpRequestBody = Record({
-  username: String,
-  email: String,
-  password: String,
+  username: String.withConstraint((s) => s !== "" || "ConstraintNotEmpty"),
+  email: String.withConstraint((s) => s !== "" || "ConstraintNotEmpty"),
+  password: String.withConstraint((s) => s !== "" || "ConstraintNotEmpty"),
 });
 
 export const actions: Actions = {
@@ -43,6 +44,47 @@ export const actions: Actions = {
     return redirect(303, "/app");
   },
   signup: async ({ locals }) => {
-    const { email, username, password } = await locals.formData(SignUpRequestBody);
+    const { email, username, password: plaintext } = await locals.formData(SignUpRequestBody);
+    const password = await hash(plaintext, 10);
+    try {
+      const account = await locals.database.account.create({
+        data: {
+          name: username,
+          emails: { create: { email } },
+          passwords: { create: { password } },
+        },
+        select: { id: true, name: true },
+      });
+      return json({ account });
+    } catch (err) {
+      if (err instanceof PrismaClientKnownRequestError) {
+        if (err.code === "P2002") {
+          // Unique constraint error
+          if (err.meta && Array.isArray(err.meta?.target)) {
+            if (err.meta.target.includes("name")) {
+              throw error(409, {
+                code: "AccountExists",
+                message: "This username is already in use",
+                context: { username },
+              });
+            }
+            if (err.meta.target.includes("email")) {
+              throw error(409, {
+                code: "AccountExists",
+                message: "This email is already in use",
+                context: { email },
+              });
+            }
+          }
+          throw error(409, {
+            code: "AccountExists",
+            message: "An account already exists with this username or email",
+            context: { email, username },
+          });
+          locals.logger.error(err, "Failed to create account");
+        }
+      }
+      throw error;
+    }
   },
 };
