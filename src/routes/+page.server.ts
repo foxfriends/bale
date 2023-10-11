@@ -1,4 +1,4 @@
-import { json, redirect } from "@sveltejs/kit";
+import { redirect } from "@sveltejs/kit";
 import { compare, hash } from "bcrypt";
 import { Record, String } from "runtypes";
 import { error, notFound } from "$lib/server/response";

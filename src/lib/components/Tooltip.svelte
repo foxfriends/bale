@@ -2,17 +2,16 @@
   import { browser } from "$app/environment";
   import { getPortal } from "$lib/actions/portal";
   import { writable } from "svelte/store";
-  import { fly, scale } from "svelte/transition";
+  import { scale } from "svelte/transition";
   import { prefersReducedMotion } from "$lib/stores/prefersReducedMotion";
   import { intersectionObserver } from "$lib/stores/intersectionObserver";
   import { scrollOffset } from "$lib/util/scrollOffset";
-  import { onMount } from "svelte";
 
   const label = browser ? window.crypto.randomUUID() : undefined;
   const portal = getPortal();
 
   export let open = false;
-  export let style: "error" = "error";
+  export let style: "error" = "error" as const;
 
   let anchor: HTMLDivElement;
   let target: { x: number; y: number } | undefined;

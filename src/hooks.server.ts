@@ -1,11 +1,10 @@
 import { randomUUID } from "node:crypto";
+import pino from "pino";
+import { ValidationError } from "runtypes";
 import { Prisma, PrismaClient, type Session } from "@prisma/client";
 import { DATABASE_URL, LOG_LEVEL } from "$env/static/private";
-import pino from "pino";
 import type { Handle, HandleServerError } from "@sveltejs/kit";
 import { error } from "$lib/server/response";
-import { ValidationError } from "runtypes";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 const logger = pino({ level: LOG_LEVEL });
 const client = new PrismaClient({
