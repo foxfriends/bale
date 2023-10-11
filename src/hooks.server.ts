@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient, type Session } from "@prisma/client";
 import { DATABASE_URL, LOG_LEVEL } from "$env/static/private";
 import pino from "pino";
 import type { Handle, HandleServerError } from "@sveltejs/kit";
@@ -26,10 +26,33 @@ export async function handle({ event, resolve }: Parameters<Handle>[0]): Promise
   event.locals.id = randomUUID();
 
   const sessionid = event.cookies.get("bale-session");
-  const session = sessionid
+  let session: Partial<Session> | undefined | null = sessionid
     ? await client.session.findUnique({ where: { id: sessionid } })
     : undefined;
-  event.locals.session = session ?? undefined;
+  // We're not allowed to touch the cookies after the request function generates the response,
+  // so instead the getter/setter makes sure cookie adjustments are done up front.
+  Object.defineProperty(event.locals, "session", {
+    get: () => structuredClone(session),
+    set: (newSession: Partial<Session> | undefined | null) => {
+      session = newSession;
+      if (!session) {
+        event.cookies.delete("bale-session", {
+          path: "/",
+          httpOnly: true,
+          secure: true,
+          sameSite: true,
+        });
+      } else {
+        session.id ??= randomUUID();
+        event.cookies.set("bale-session", session.id, {
+          path: "/",
+          httpOnly: true,
+          secure: true,
+          sameSite: true,
+        });
+      }
+    },
+  });
 
   event.locals.logger = logger.child({ request: event.locals.id });
   event.locals.database = client;
@@ -56,19 +79,16 @@ export async function handle({ event, resolve }: Parameters<Handle>[0]): Promise
   } finally {
     try {
       if (event.locals.session) {
-        const { id } = await client.session.upsert({
+        await client.session.upsert({
           where: { id: event.locals.session.id },
           update: event.locals.session,
           create: event.locals.session,
-          select: { id: true },
         });
-        event.cookies.set("bale-session", id);
       } else if (sessionid) {
         await client.session.delete({ where: { id: sessionid } });
-        event.cookies.delete("bale-session");
       }
     } catch (error) {
-      event.locals.logger.error(error, "Updating session failed");
+      event.locals.logger.error(error, "Persisting session changes failed");
     }
   }
 }

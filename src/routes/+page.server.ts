@@ -41,7 +41,7 @@ export const actions: Actions = {
       });
     }
     locals.session = { accountId: account.id };
-    return redirect(303, "/app");
+    throw redirect(303, "/app");
   },
   signup: async ({ locals }) => {
     const { email, username, password: plaintext } = await locals.formData(SignUpRequestBody);
@@ -55,7 +55,8 @@ export const actions: Actions = {
         },
         select: { id: true, name: true },
       });
-      return json({ account });
+      locals.session = { accountId: account.id };
+      throw redirect(303, "/app");
     } catch (err) {
       if (err instanceof PrismaClientKnownRequestError) {
         if (err.code === "P2002") {
