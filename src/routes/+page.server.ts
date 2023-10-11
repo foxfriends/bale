@@ -85,7 +85,7 @@ export const actions: Actions = {
           locals.logger.error(err, "Failed to create account");
         }
       }
-      throw error;
+      throw err;
     }
   },
 };

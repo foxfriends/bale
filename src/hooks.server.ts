@@ -31,9 +31,13 @@ export async function handle({ event, resolve }: Parameters<Handle>[0]): Promise
     : undefined;
   // We're not allowed to touch the cookies after the request function generates the response,
   // so instead the getter/setter makes sure cookie adjustments are done up front.
+  const sessionsDiscarded: string[] = [];
   Object.defineProperty(event.locals, "session", {
     get: () => structuredClone(session),
     set: (newSession: Partial<Session> | undefined | null) => {
+      if (session && session.id && newSession?.id !== session.id) {
+        sessionsDiscarded.push(session.id);
+      }
       session = newSession;
       if (!session) {
         event.cookies.delete("bale-session", {
@@ -78,14 +82,13 @@ export async function handle({ event, resolve }: Parameters<Handle>[0]): Promise
     return await resolve(event);
   } finally {
     try {
-      if (event.locals.session) {
+      await client.session.deleteMany({ where: { id: { in: sessionsDiscarded } } });
+      if (event.locals.session?.id) {
         await client.session.upsert({
           where: { id: event.locals.session.id },
           update: event.locals.session,
           create: event.locals.session,
         });
-      } else if (sessionid) {
-        await client.session.delete({ where: { id: sessionid } });
       }
     } catch (error) {
       event.locals.logger.error(error, "Persisting session changes failed");
