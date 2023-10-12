@@ -1,7 +1,7 @@
-function matchObject(template: Record<string, unknown>, target: Record<string, unknown>) {
+function matchObject(template: Record<string, unknown>, target: Record<string, unknown>): boolean {
   for (const [key, value] of Object.entries(template)) {
     if (typeof value === "function") {
-      if (value(target[key])) return false;
+      if (!value(target[key])) return false;
     } else if (value && typeof value === "object") {
       if (!target[key] || typeof target[key] !== "object") return false;
       return matchObject(value as Record<string, unknown>, target[key] as Record<string, unknown>);
@@ -18,7 +18,7 @@ export function matchError(code: string, context: unknown, message: string) {
     if (!error.context) return null;
     if (typeof error.context !== "object") return null;
     return matchObject(context as Record<string, unknown>, error.context as Record<string, unknown>)
-      ? null
-      : message;
+      ? message
+      : null;
   };
 }

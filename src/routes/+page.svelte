@@ -43,9 +43,17 @@
   let signupUsernameError: string | null = null;
   let signupEmailError: string | null = null;
   let signupPasswordError: string | null = null;
+  $: console.log($page.error);
   $: password, (loginPasswordError = signupPasswordError = null);
   $: username, (loginUsernameError = signupUsernameError = null);
   $: email, (signupEmailError = null);
+  $: currentForm,
+    (signupEmailError =
+      signupPasswordError =
+      signupUsernameError =
+      loginUsernameError =
+      loginPasswordError =
+        null);
   $: loginUsernameError = matchError(
     "NotFound",
     { model: "Account" },

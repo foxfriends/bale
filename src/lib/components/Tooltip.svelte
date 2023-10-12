@@ -15,10 +15,17 @@
 
   let anchor: HTMLDivElement;
   let target: { x: number; y: number } | undefined;
-  $: if (open && anchor) {
+
+  function reposition() {
     const { x, width, y } = anchor.getBoundingClientRect();
     const { x: scrollX, y: scrollY } = scrollOffset(anchor);
     target = { x: x + scrollX + width / 2, y: y + scrollY - 4 };
+  }
+
+  $: if (open && anchor) reposition();
+
+  function dismiss() {
+    open = false;
   }
 
   const tooltip = writable<HTMLDivElement | null>(null);
@@ -32,7 +39,7 @@
 
 <div
   on:mouseenter={() => (open = true)}
-  on:mouseleave={() => (open = false)}
+  on:mouseleave={dismiss}
   role="status"
   aria-describedby={label}
   bind:this={anchor}
@@ -41,9 +48,13 @@
 </div>
 
 {#if open && target}
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
+  <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
   <div
     use:portal
     transition:scale={{ start: $prefersReducedMotion ? 1 : 0.95, opacity: 0, duration: 100 }}
+    on:mouseleave={dismiss}
+    on:click={dismiss}
     class="tooltip {style}"
     role="tooltip"
     id={label}
@@ -58,7 +69,10 @@
   </div>
 {/if}
 
-<svelte:window on:keydown={(event) => event.key === "Escape" && (open = false)} />
+<svelte:window
+  on:keydown={(event) => event.key === "Escape" && dismiss()}
+  on:resize={() => open && reposition()}
+/>
 
 <style>
   .tooltip {
@@ -66,7 +80,6 @@
     top: 0;
     left: 0;
     transform-origin: bottom center;
-    pointer-events: none;
   }
 
   .tip-content-wrapper {
@@ -81,6 +94,7 @@
     border-radius: var(--radius-sm);
     width: max-content;
     transition: 0.2s transform 50ms;
+    cursor: pointer;
   }
 
   .tip-arrow {
@@ -92,6 +106,7 @@
     transform: translate(-50%, -75%) rotate(45deg);
     background-color: rgb(var(--tip-color));
     border-bottom-right-radius: var(--radius-xs);
+    pointer-events: none;
   }
 
   .error {
