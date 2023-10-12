@@ -7,8 +7,8 @@
 <style>
   footer {
     padding: var(--24);
-    font-weight: 700;
-    font-size: var(--font-sm);
+    font-weight: var(--font-bold);
+    font-size: var(--font-xs);
     display: flex;
     flex-direction: row;
     gap: var(--24);
