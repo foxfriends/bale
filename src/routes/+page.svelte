@@ -20,17 +20,21 @@
       ? "signin"
       : "signup";
 
-  let username = "";
-  let password = "";
-  let email = "";
+  $: pageError = $page.error;
+
+  export let username = "";
+  export let password = "";
+  export let email = "";
 
   let isSubmitting = false;
   const handleForm: SubmitFunction = () => {
     isSubmitting = true;
 
-    return ({ update }) => {
+    return async ({ update, result }) => {
+      if (result.type === "error") {
+        pageError = result.error;
+      } else await update();
       isSubmitting = false;
-      update();
     };
   };
 
@@ -43,7 +47,6 @@
   let signupUsernameError: string | null = null;
   let signupEmailError: string | null = null;
   let signupPasswordError: string | null = null;
-  $: console.log($page.error);
   $: password, (loginPasswordError = signupPasswordError = null);
   $: username, (loginUsernameError = signupUsernameError = null);
   $: email, (signupEmailError = null);
@@ -58,11 +61,11 @@
     "NotFound",
     { model: "Account" },
     "We don't know anyone with this username",
-  )($page.error);
+  )(pageError);
   $: loginPasswordError = coalesce(
     matchError("InvalidCredentials", {}, "This is not the correct password"),
     matchError("NotFound", { model: "Password" }, "This account doesn't seem to have a password"),
-  )($page.error);
+  )(pageError);
   $: signupUsernameError = coalesce(
     matchError(
       "ValidationError",
@@ -70,12 +73,12 @@
       "Username may not be empty",
     ),
     matchError("AccountExists", { username: Boolean }, "This username is already in use"),
-  )($page.error);
+  )(pageError);
   $: signupPasswordError = matchError(
     "ValidationError",
     { details: { password: constraintNotEmpty } },
     "Password may not be empty",
-  )($page.error);
+  )(pageError);
   $: signupEmailError = coalesce(
     matchError(
       "ValidationError",
@@ -83,7 +86,7 @@
       "E-mail may not be empty",
     ),
     matchError("AccountExists", { email: Boolean }, "This e-mail address is already in use"),
-  )($page.error);
+  )(pageError);
 </script>
 
 <main>
