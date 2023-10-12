@@ -1,6 +1,9 @@
 <script>
-  const accountName = "foxfriends";
-  const name = "Cameron Eldridge";
+  import { page } from "$app/stores";
+
+  $: ({ account } = $page.data);
+
+  const name = "Baley McBaleface";
 </script>
 
 <!--
@@ -23,7 +26,7 @@
   <div class="sidebar right">
     <div class="profile">
       <div class="info">
-        <span class="account">{accountName}</span>
+        <span class="account">{account.name}</span>
         <span class="name">{name}</span>
       </div>
       <div class="avatar">Turtle</div>
