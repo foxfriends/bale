@@ -4,7 +4,7 @@
   export let shape: [number, number, ...number[]];
   export let width = 16;
   export let height = 9;
-  export let flow = 0.2;
+  export let flow = 0;
   export let cycle = 4_000;
 
   $: waver = 0;

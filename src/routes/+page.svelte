@@ -11,6 +11,7 @@
   import { prefersReducedMotion } from "$lib/stores/prefersReducedMotion";
   import { enhance } from "$app/forms";
   import type { SubmitFunction } from "./$types";
+  import PageFooter from "$lib/components/PageFooter.svelte";
 
   let currentForm: "signup" | "signin" =
     $page.error?.context &&
@@ -92,10 +93,10 @@
 <main>
   <div class="fold" />
   <div class="waterline wide">
-    <Waterline shape={[8.5, 8, 7, 1, 0, -1]} width={24} flow={$prefersReducedMotion ? 0 : 0.2} />
+    <Waterline shape={[8.5, 8, 7, 1, 0, -1]} width={24} flow={$prefersReducedMotion ? 0 : 0.3} />
   </div>
   <div class="waterline narrow">
-    <Waterline shape={[1, 2, 1, 2, 2]} width={24} flow={$prefersReducedMotion ? 0 : 0.2} />
+    <Waterline shape={[1, 2, 1, 2, 2]} width={24} flow={$prefersReducedMotion ? 0 : 0.3} />
   </div>
 
   <article class="catch">
@@ -172,6 +173,8 @@
         <p>It’s nice to see other people, you don&apos;t always need an occasion</p>
       </section>
     </article>
+
+    <PageFooter />
   </div>
 </main>
 
@@ -205,7 +208,6 @@
     grid-column: 1 / -1;
     grid-row: shore;
     background-color: rgb(var(--rgb-water));
-    padding-block: var(--64);
   }
 
   .waterline {

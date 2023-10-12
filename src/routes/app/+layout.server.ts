@@ -1,10 +1,9 @@
 import type { RequestEvent } from "./$types";
+import { error } from "$lib/server/response";
 
-export async function load({ fetch }: RequestEvent) {
-  const response = await fetch("/api/session");
-  if (response.status === 401) {
-    return { session: null };
+export async function load({ locals }: RequestEvent) {
+  if (!locals.session?.accountId) {
+    throw error(401, { code: "NotLoggedIn", message: "You are not logged in" });
   }
-  const { session } = await response.json();
-  return { session };
+  return { session: locals.session };
 }

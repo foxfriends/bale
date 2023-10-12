@@ -34,7 +34,7 @@ export const actions: Actions = {
       throw notFound("No password was found for this account", "Password", { form: "signin" });
     }
     if (!(await compare(plaintext, password.password))) {
-      throw error(403, {
+      throw error(401, {
         code: "InvalidCredentials",
         message: "That is not the correct password",
         context: { form: "signin" },
