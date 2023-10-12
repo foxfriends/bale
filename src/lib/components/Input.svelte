@@ -16,5 +16,10 @@
     font-weight: var(--font-bold);
     border-radius: var(--radius-sm);
     border: none;
+    /**
+     * NOTE: outline has been moved to the surrounding <Field>.
+     * All inputs should be within a field anyway.
+     */
+    outline: none;
   }
 </style>

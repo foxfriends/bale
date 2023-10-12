@@ -1,5 +1,8 @@
 <script>
   import { page } from "$app/stores";
+  import Field from "./Field.svelte";
+  import Input from "./Input.svelte";
+  import SearchIcon from "./SearchIcon.svelte";
 
   $: ({ account } = $page.data);
 
@@ -21,16 +24,23 @@
     <a class="title" href="/app">Bale</a>
   </div>
   <div class="page-width">
-    <slot />
+    <div>
+      <slot />
+    </div>
+    <search>
+      <Field icon={SearchIcon}>
+        <Input name="search" type="search" placeholder="Search" />
+      </Field>
+    </search>
   </div>
   <div class="sidebar right">
-    <div class="profile">
+    <a class="profile" href="/app/profile/{account.name}">
       <div class="info">
         <span class="account">{account.name}</span>
         <span class="name">{name}</span>
       </div>
       <div class="avatar">Turtle</div>
-    </div>
+    </a>
   </div>
 </nav>
 
@@ -39,6 +49,7 @@
     position: sticky;
     top: 0;
     padding: var(--16);
+    gap: var(--16);
     background-color: rgb(var(--rgb-grass) / 0.9);
     box-shadow: 0 var(--4) var(--4) rgb(var(--rgb-black) / 0.25);
     backdrop-filter: var(--4);
@@ -101,5 +112,10 @@
     align-items: center;
     justify-content: center;
     border-radius: 100%;
+  }
+
+  search {
+    margin-left: auto;
+    width: var(--300);
   }
 </style>
