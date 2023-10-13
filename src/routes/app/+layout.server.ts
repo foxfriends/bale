@@ -1,12 +1,16 @@
-import type { RequestEvent } from "./$types";
 import { error } from "$lib/server/response";
+import type { RequestEvent } from "./$types";
 
 export async function load({ locals }: RequestEvent) {
-  if (!locals.session?.accountId) {
-    throw error(401, { code: "NotLoggedIn", message: "You are not logged in" });
+  if (!locals.sessionId) {
+    throw error(401, { code: "NotSignedIn", message: "You must be signed in to view this page" });
   }
-  const account = await locals.database.account.findUniqueOrThrow({
-    where: { id: locals.session.accountId },
+  const session = await locals.database.session.findUnique({
+    where: { id: locals.sessionId },
+    include: { account: true },
   });
-  return { session: locals.session, account };
+  if (session === null) {
+    throw error(401, { code: "SessionExpired", message: "Your session has expired" });
+  }
+  return { session };
 }

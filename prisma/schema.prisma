@@ -12,6 +12,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+/// Identifying information about a user's account.
 model Account {
   id        String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   name      String     @unique @db.Citext
@@ -20,10 +21,14 @@ model Account {
 
   emails   Email[]   @relation("account")
   sessions Session[]
+  profile  Profile?
+  images   Image[]
 
   @@map("accounts")
 }
 
+/// Email addresses associated with each account. Why you would associate more
+/// than one, I don't know, but you can. You can't log in with email.
 model Email {
   id        String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   email     String @unique @db.Citext
@@ -34,6 +39,8 @@ model Email {
   @@map("emails")
 }
 
+/// Passwords for an account. Only the most recent password is to be used to
+/// log in, but older passwords are kept for some reason.
 model Password {
   id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   accountId String   @map("account_id") @db.Uuid
@@ -45,6 +52,8 @@ model Password {
   @@map("passwords")
 }
 
+/// User sessions, associated with an account. These should expire if not used,
+/// but they don't currently.
 model Session {
   id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   accountId String   @map("account_id") @db.Uuid
@@ -54,4 +63,48 @@ model Session {
   account Account @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("sessions")
+}
+
+/// Non-identifying profile information associated with an account. I suppose
+/// an account without a profile is simply... private? Un-browsable? It's a bit
+/// weird to have it split out otherwise, but I also don't like having it merged
+/// into the Account table.
+model Profile {
+  id        String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  accountId String  @unique @map("account_id") @db.Uuid
+  name      String
+  bio       String
+  imageId   String? @unique @map("image_id") @db.Uuid
+
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  image   Image?  @relation(fields: [imageId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@map("profiles")
+}
+
+/// The user's in-app avatar, a turtle with a hat, or something like that.
+///
+/// Users may have no avatars, and maybe down the line we'll allow them
+/// to save a few avatars and switch between them?
+model Avatar {
+  id        String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  color     Int    @default(2326812415) // "Turtle" colour: #8AB056FF
+  accountId String @unique @map("account_id") @db.Uuid
+
+  @@map("avatars")
+}
+
+/// Record of images uploaded to our storage. Images may be owned by users, or
+/// not. Try to keep it in line with what is stored.
+model Image {
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  key       String   @unique
+  bucket    String
+  ownerId   String?  @map("owner_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+
+  owner          Account? @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  asProfilePhoto Profile?
+
+  @@map("images")
 }

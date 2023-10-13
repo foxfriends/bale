@@ -13,6 +13,6 @@ export async function GET({ locals }: RequestEvent): Promise<Response> {
 }
 
 export async function DELETE({ locals }: RequestEvent): Promise<Response> {
-  delete locals.session;
+  locals.setSession(null);
   return new Response(null, { status: 204 });
 }

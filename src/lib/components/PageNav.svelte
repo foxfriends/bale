@@ -1,11 +1,10 @@
-<script>
-  import { page } from "$app/stores";
+<script lang="ts">
   import Field from "./Field.svelte";
   import Input from "./Input.svelte";
   import SearchIcon from "./SearchIcon.svelte";
+  import type { Account } from "@prisma/client";
 
-  $: ({ account } = $page.data);
-
+  export let account: Account;
   const name = "Baley McBaleface";
 </script>
 

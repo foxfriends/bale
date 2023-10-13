@@ -5,6 +5,8 @@
   import Waterline from "$lib/components/Waterline.svelte";
   import PageFooter from "$lib/components/PageFooter.svelte";
   import TextLink from "$lib/components/TextLink.svelte";
+
+  $: signInUrl = `/?${new URLSearchParams({ next: $page.url.toString(), form: "signin" })}`;
 </script>
 
 {#if $page.route.id === "/"}
@@ -19,13 +21,18 @@
 
       <section>
         {#if $page.error}
-          {#if $page.error.code === "NotLoggedIn"}
+          {#if $page.error.code === "NotSignedIn"}
             <p>You need to be logged in to view this page.</p>
-            <p class="cta"><TextLink href="/">Go to login &rarr;</TextLink></p>
+            <p class="cta">
+              <TextLink href={signInUrl}>Go to sign in &rarr;</TextLink>
+            </p>
+          {:else if $page.error.code === "SessionExpired"}
+            <p>Your session has expired.</p>
+            <p class="cta"><TextLink href={signInUrl}>Sign back in &rarr;</TextLink></p>
           {:else}
             <p>Something unexpected has happened.</p>
             <p>{$page.error.message}</p>
-            <p class="cta"><TextLink href="/">Go to home page &rarr;</TextLink></p>
+            <p class="cta"><TextLink href={signInUrl}>Go to home page &rarr;</TextLink></p>
           {/if}
         {:else}
           <p>Something unexpected has happened.</p>

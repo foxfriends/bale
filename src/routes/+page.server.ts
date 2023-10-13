@@ -8,6 +8,7 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 const SignInRequestBody = Record({
   username: String,
   password: String,
+  next: String.optional(),
 });
 
 const SignUpRequestBody = Record({
@@ -18,7 +19,7 @@ const SignUpRequestBody = Record({
 
 export const actions: Actions = {
   signin: async ({ locals }) => {
-    const { username, password: plaintext } = await locals.formData(SignInRequestBody);
+    const { next, username, password: plaintext } = await locals.formData(SignInRequestBody);
     const account = await locals.database.account.findUnique({
       where: { name: username },
     });
@@ -40,8 +41,8 @@ export const actions: Actions = {
         context: { form: "signin" },
       });
     }
-    locals.session = { accountId: account.id };
-    throw redirect(303, "/app");
+    locals.setSession({ accountId: account.id });
+    throw redirect(303, next ?? "/app");
   },
   signup: async ({ locals }) => {
     const { email, username, password: plaintext } = await locals.formData(SignUpRequestBody);
@@ -55,7 +56,7 @@ export const actions: Actions = {
         },
         select: { id: true, name: true },
       });
-      locals.session = { accountId: account.id };
+      locals.setSession({ accountId: account.id });
       throw redirect(303, "/app");
     } catch (err) {
       if (err instanceof PrismaClientKnownRequestError) {

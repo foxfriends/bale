@@ -14,14 +14,17 @@
   import PageFooter from "$lib/components/PageFooter.svelte";
 
   let currentForm: "signup" | "signin" =
-    $page.error?.context &&
-    typeof $page.error?.context === "object" &&
-    "form" in $page.error.context &&
-    $page.error.context?.form === "signin"
+    (!$page.error && $page.url.searchParams.get("form") === "signin") ||
+    ($page.error &&
+      $page.error.context &&
+      typeof $page.error.context === "object" &&
+      "form" in $page.error.context &&
+      $page.error.context.form === "signin")
       ? "signin"
       : "signup";
 
   $: pageError = $page.error;
+  $: next = $page.url.searchParams.get("next");
 
   export let username = "";
   export let password = "";
@@ -123,6 +126,9 @@
       </div>
       <h2>Nice to see you again</h2>
       <form method="POST" action="?/signin" use:enhance={handleForm}>
+        {#if next}
+          <input type="hidden" name="next" value={next} />
+        {/if}
         <Field error={loginUsernameError}>
           <Input type="text" placeholder="Username" name="username" bind:value={username} />
         </Field>

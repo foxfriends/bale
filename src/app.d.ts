@@ -14,12 +14,15 @@ declare global {
     }
 
     interface Locals {
-      id: string;
+      requestId: string;
       logger: Logger;
       database: PrismaClient;
-      session?: Partial<Session> & {
-        accountId: string;
-      };
+      /** The current session ID. If undefined, there is no session */
+      sessionId?: string;
+      /** Retrieves the current session. The current session will be pulled from database at most once */
+      session(): Promise<Partial<Session> | undefined>;
+      /** Sets the current session, updating `sessionId` and the return value of `session()` accordingly */
+      setSession(session: (Partial<Session> & { accountId: string }) | null);
       formData<T extends RuntypeBase>(this: void, runtype: T): Promise<Static<T>>;
     }
 

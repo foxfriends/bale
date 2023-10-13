@@ -22,42 +22,54 @@ client.$on("info", (event: Prisma.LogEvent) => logger.info(event, "%s", event.me
 client.$on("warn", (event: Prisma.LogEvent) => logger.warn(event, "%s", event.message));
 
 export async function handle({ event, resolve }: Parameters<Handle>[0]): Promise<Response> {
-  event.locals.id = randomUUID();
+  event.locals.requestId = randomUUID();
 
-  const sessionid = event.cookies.get("bale-session");
-  let session: Partial<Session> | undefined | null = sessionid
-    ? await client.session.findUnique({ where: { id: sessionid } })
-    : undefined;
+  // `event.locals.sessionId` is the current session ID. If undefined, then there is
+  // no active session.
+  event.locals.sessionId = event.cookies.get("bale-session");
+
   // We're not allowed to touch the cookies after the request function generates the response,
-  // so instead the getter/setter makes sure cookie adjustments are done up front.
+  // so instead the getter/setter makes sure cookie adjustments are done up front. Meanwhile we
+  // want the setting of the session data to be synchronous, so we store discarded sessions to
+  // delete for later.
   const sessionsDiscarded: string[] = [];
-  Object.defineProperty(event.locals, "session", {
-    get: () => structuredClone(session),
-    set: (newSession: Partial<Session> | undefined | null) => {
-      if (session && session.id && newSession?.id !== session.id) {
-        sessionsDiscarded.push(session.id);
-      }
-      session = newSession;
-      if (!session) {
-        event.cookies.delete("bale-session", {
-          path: "/",
-          httpOnly: true,
-          secure: true,
-          sameSite: true,
-        });
-      } else {
-        session.id ??= randomUUID();
-        event.cookies.set("bale-session", session.id, {
-          path: "/",
-          httpOnly: true,
-          secure: true,
-          sameSite: true,
-        });
-      }
-    },
-  });
+  let session: (Partial<Session> & { accountId: string }) | undefined | null; // A cache, to only load from DB if needed
+  event.locals.session = async () => {
+    if (session) return session;
+    const id = event.locals.sessionId;
+    if (!id) return undefined;
+    session = await client.session.findUnique({ where: { id } });
+    return session ?? undefined;
+  };
 
-  event.locals.logger = logger.child({ request: event.locals.id });
+  event.locals.setSession = (
+    newSession: (Partial<Session> & { accountId: string }) | undefined | null,
+  ) => {
+    if (event.locals.sessionId && newSession?.id !== event.locals.sessionId) {
+      sessionsDiscarded.push(event.locals.sessionId);
+    }
+    session = newSession;
+    if (!session) {
+      event.locals.sessionId = undefined;
+      event.cookies.delete("bale-session", {
+        path: "/",
+        httpOnly: true,
+        secure: true,
+        sameSite: true,
+      });
+    } else {
+      session.id ??= randomUUID();
+      event.locals.sessionId = session.id;
+      event.cookies.set("bale-session", session.id, {
+        path: "/",
+        httpOnly: true,
+        secure: true,
+        sameSite: true,
+      });
+    }
+  };
+
+  event.locals.logger = logger.child({ request: event.locals.requestId });
   event.locals.database = client;
 
   event.locals.formData = async (schema) => {
@@ -82,11 +94,11 @@ export async function handle({ event, resolve }: Parameters<Handle>[0]): Promise
   } finally {
     try {
       await client.session.deleteMany({ where: { id: { in: sessionsDiscarded } } });
-      if (event.locals.session?.id) {
+      if (session?.id) {
         await client.session.upsert({
-          where: { id: event.locals.session.id },
-          update: event.locals.session,
-          create: event.locals.session,
+          where: { id: session?.id },
+          update: session,
+          create: session,
         });
       }
     } catch (error) {

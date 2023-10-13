@@ -1,12 +1,13 @@
 import { notFound } from "$lib/server/response";
 import type { RequestEvent } from "./$types";
 
-export function load({ params, locals }: RequestEvent) {
-  const account = locals.database.account.findUnique({ where: { name: params.name } });
-
+export async function load({ params, locals }: RequestEvent) {
+  const account = await locals.database.account.findUnique({
+    where: { name: params.name },
+    include: { profile: true },
+  });
   if (!account) {
-    throw notFound("Profile could not be found", "Account");
+    throw notFound("Account could not be found", "Account");
   }
-
-  return { profile: account };
+  return { account };
 }
