@@ -1,11 +1,11 @@
 <script lang="ts">
   import Field from "./Field.svelte";
   import Input from "./Input.svelte";
+  import NavProfile from "./NavProfile.svelte";
   import SearchIcon from "./SearchIcon.svelte";
   import type { Account } from "@prisma/client";
 
-  export let account: Account;
-  const name = "Baley McBaleface";
+  export let account: Account | undefined;
 </script>
 
 <!--
@@ -19,10 +19,8 @@
 -->
 
 <nav>
-  <div class="sidebar">
-    <a class="title" href="/app">Bale</a>
-  </div>
-  <div class="page-width">
+  <a class="logo" href="/app">Bale</a>
+  <div class="main">
     <div>
       <slot />
     </div>
@@ -32,85 +30,59 @@
       </Field>
     </search>
   </div>
-  <div class="sidebar right">
-    <a class="profile" href="/app/profile/{account.name}">
-      <div class="info">
-        <span class="account">{account.name}</span>
-        <span class="name">{name}</span>
-      </div>
-      <div class="avatar">Turtle</div>
-    </a>
-  </div>
+
+  {#if account}
+    <div class="right">
+      <NavProfile {account} />
+    </div>
+  {/if}
 </nav>
 
 <style>
   nav {
     position: sticky;
     top: 0;
-    padding: var(--16);
-    gap: var(--16);
+    grid-row: nav-start / nav-end;
+    grid-column: left-start / right-end;
+
+    display: grid;
+    grid-template-columns: subgrid;
+    padding: var(--16) 0;
     background-color: rgb(var(--rgb-grass) / 0.9);
     box-shadow: 0 var(--4) var(--4) rgb(var(--rgb-black) / 0.25);
     backdrop-filter: var(--4);
-    display: flex;
-    flex-direction: row;
+    align-items: end;
     white-space: nowrap;
   }
 
-  .page-width {
+  .main {
     display: flex;
-    flex-grow: 999;
     flex-direction: row;
+    align-items: end;
     justify-content: space-between;
-    max-width: var(--width-page);
+    grid-row: 1;
+    gap: var(--48);
+    grid-column: main-start / main-end;
   }
 
-  .sidebar {
-    display: flex;
-    flex-basis: 0;
-    flex-grow: 1;
+  .logo {
+    grid-row: 1;
+    grid-column: left-start / left-end;
+    margin-left: var(--16);
+    margin-right: var(--32);
+    font-size: var(--font-xl);
+    font-weight: var(--font-bold);
+    justify-self: start;
   }
 
   .right {
-    justify-content: end;
-  }
-
-  .title {
-    font-size: var(--font-xl);
-    font-weight: var(--font-bold);
-  }
-
-  .profile {
+    container-type: inline-size;
     display: flex;
-    flex-direction: row;
-    gap: var(--16);
-  }
-
-  .info {
-    display: flex;
-    flex-direction: column;
-    gap: var(--2);
-    align-items: end;
-  }
-
-  .account {
-    font-weight: var(--font-semibold);
-  }
-
-  .name {
-    font-size: var(--font-sm);
-    color: rgb(var(--rgb-black) / 0.6);
-  }
-
-  .avatar {
-    width: 64px;
-    height: 38px;
-    background-color: rgb(var(--rgb-turtle));
-    font-size: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 100%;
+    grid-row: 1;
+    grid-column: right-start / right-end;
+    margin-right: var(--16);
+    margin-left: var(--64);
+    min-width: 64px;
   }
 
   search {

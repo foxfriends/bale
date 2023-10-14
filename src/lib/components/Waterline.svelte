@@ -6,8 +6,10 @@
   export let height = 9;
   export let flow = 0;
   export let cycle = 4_000;
+  export let above = false;
 
   $: waver = 0;
+  $: close = above ? 0 : height;
 
   onMount(() => {
     let cancel = window.requestAnimationFrame(animateWave);
@@ -35,8 +37,8 @@
     d="
     M0 {shape[0]}
     {curve}
-    L{width} {height}
-    L0 {height}
+    L{width} {close}
+    L0 {close}
     Z"
   />
 </svg>
