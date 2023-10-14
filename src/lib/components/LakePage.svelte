@@ -39,7 +39,9 @@
       minmax(auto, var(--128))
       [left-end main-start]
       1fr
-      [main-end right-start]
+      [search-start]
+      auto
+      [search-end main-end right-start]
       minmax(auto, var(--360))
       [right-end];
     flex-direction: column;
@@ -71,7 +73,9 @@
         1fr
         [left-end main-start]
         auto
-        [main-end right-start]
+        [search-start]
+        auto
+        [search-end main-end right-start]
         minmax(auto, 1fr)
         [right-end];
     }

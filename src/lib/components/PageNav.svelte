@@ -8,28 +8,16 @@
   export let account: Account | undefined;
 </script>
 
-<!--
-  TODO: This needs to be responsive, but there are no designs for that yet, and no pages on which
-  to test this requirement in a reliable way.
-
-  Most likely, as space ceases to suffice:
-  * Mush the Bale logotext into the same space as the page title, add a separator, remove the left column
-  * Remove the names from the right
-  * Switch to mobile style nav by the time that stops working (condensed search, no titles)
--->
-
 <nav>
   <a class="logo" href="/app">Bale</a>
-  <div class="main">
-    <div>
-      <slot />
-    </div>
-    <search>
-      <Field icon={SearchIcon}>
-        <Input name="search" type="search" placeholder="Search" />
-      </Field>
-    </search>
+  <div class="titles">
+    <slot />
   </div>
+  <search>
+    <Field icon={SearchIcon}>
+      <Input name="search" type="search" placeholder="Search" />
+    </Field>
+  </search>
 
   {#if account}
     <div class="right">
@@ -55,14 +43,15 @@
     white-space: nowrap;
   }
 
-  .main {
+  .titles {
     display: flex;
     flex-direction: row;
     align-items: end;
     justify-content: space-between;
     grid-row: 1;
     gap: var(--48);
-    grid-column: main-start / main-end;
+    margin-right: var(--48);
+    grid-column: main-start / search-start;
   }
 
   .logo {
@@ -86,7 +75,9 @@
   }
 
   search {
+    grid-row: 1;
     margin-left: auto;
     width: var(--300);
+    grid-column: search-start / search-end;
   }
 </style>
