@@ -19,6 +19,7 @@
     display: flex;
     flex-direction: row;
     gap: var(--16);
+    min-width: 0;
   }
 
   .info {
@@ -26,6 +27,7 @@
     flex-direction: column;
     gap: var(--2);
     align-items: end;
+    min-width: 0;
   }
 
   .account {
@@ -35,6 +37,15 @@
   .name {
     font-size: var(--font-sm);
     color: rgb(var(--rgb-black) / 0.6);
+  }
+
+  .account,
+  .name {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .avatar {
