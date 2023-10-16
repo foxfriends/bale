@@ -10,14 +10,15 @@
 
 <nav>
   <a class="logo" href="/app">Bale</a>
-  <div class="titles">
-    <slot />
+
+  <div class="main">
+    <div class="titles"><slot /></div>
+    <search>
+      <Field icon={SearchIcon}>
+        <Input name="search" type="search" placeholder="Search" />
+      </Field>
+    </search>
   </div>
-  <search>
-    <Field icon={SearchIcon}>
-      <Input name="search" type="search" placeholder="Search" />
-    </Field>
-  </search>
 
   {#if account}
     <div class="right">
@@ -30,11 +31,17 @@
   nav {
     position: sticky;
     top: 0;
-    grid-row: nav-start / nav-end;
-    grid-column: left-start / right-end;
 
     display: grid;
-    grid-template-columns: subgrid;
+    grid-template-rows: auto;
+    grid-template-columns:
+      [left-start]
+      1fr
+      [left-end main-start]
+      minmax(auto, var(--width-page))
+      [main-end right-start]
+      1fr
+      [right-end];
     padding: var(--16) 0;
     background-color: rgb(var(--rgb-grass) / 0.9);
     box-shadow: 0 var(--4) var(--4) rgb(var(--rgb-black) / 0.25);
@@ -43,19 +50,21 @@
     white-space: nowrap;
   }
 
+  .main {
+    display: flex;
+    flex-direction: row;
+    justify-items: space-between;
+  }
+
   .titles {
     display: flex;
     flex-direction: row;
     align-items: end;
-    justify-content: space-between;
-    grid-row: 1;
     gap: var(--48);
-    margin-right: var(--48);
-    grid-column: main-start / search-start;
+    padding-right: var(--48);
   }
 
   .logo {
-    grid-row: 1;
     grid-column: left-start / left-end;
     margin-left: var(--16);
     margin-right: var(--32);
@@ -65,17 +74,13 @@
   }
 
   .right {
-    container-type: inline-size;
-    display: flex;
-    grid-row: 1;
+    justify-self: end;
     grid-column: right-start / right-end;
-    margin-right: var(--16);
-    margin-left: var(--64);
-    min-width: 64px;
+    padding-right: var(--16);
+    padding-left: var(--64);
   }
 
   search {
-    grid-row: 1;
     margin-left: auto;
     width: var(--300);
     grid-column: search-start / search-end;

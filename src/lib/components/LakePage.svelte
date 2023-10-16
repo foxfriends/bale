@@ -7,9 +7,11 @@
 </script>
 
 <div class="page">
-  <PageNav account={$page.data.session?.account}>
-    <slot name="title" />
-  </PageNav>
+  <div class="nav">
+    <PageNav account={$page.data.session?.account}>
+      <slot name="title" />
+    </PageNav>
+  </div>
   <div class="backing">
     <Waterline above shape={[3, 2, 3, 3, 2, 3]} height={4} flow={$prefersReducedMotion ? 0 : 0.1} />
   </div>
@@ -36,19 +38,21 @@
       [foot-end];
     grid-template-columns:
       [left-start]
-      minmax(auto, var(--128))
-      [left-end main-start]
       1fr
-      [search-start]
-      auto
-      [search-end main-end right-start]
-      minmax(auto, var(--360))
+      [left-end main-start]
+      minmax(auto, var(--width-page))
+      [main-end right-start]
+      1fr
       [right-end];
-    flex-direction: column;
   }
 
   .foot {
     grid-row: foot-start / foot-end;
+    grid-column: 1 / -1;
+  }
+
+  .nav {
+    grid-row: nav-start / nav-end;
     grid-column: 1 / -1;
   }
 
@@ -63,25 +67,6 @@
     width: 100vw;
     max-width: var(--width-page);
     grid-row: safe-start / safe-end;
-    grid-column: 1 / -1;
-  }
-
-  @media (min-width: 100rem) {
-    .page {
-      grid-template-columns:
-        [left-start]
-        1fr
-        [left-end main-start]
-        auto
-        [search-start]
-        auto
-        [search-end main-end right-start]
-        minmax(auto, 1fr)
-        [right-end];
-    }
-
-    main {
-      grid-column: main-start / main-end;
-    }
+    grid-column: main-start / main-end;
   }
 </style>

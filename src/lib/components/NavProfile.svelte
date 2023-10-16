@@ -15,11 +15,9 @@
 
 <style>
   .profile {
-    margin-left: auto;
     display: flex;
     flex-direction: row;
     gap: var(--16);
-    min-width: 0;
   }
 
   .info {
@@ -57,11 +55,6 @@
     align-items: center;
     justify-content: center;
     border-radius: 100%;
-  }
-
-  @container (max-width: 12rem) {
-    .info {
-      display: none;
-    }
+    flex-shrink: 0;
   }
 </style>
