@@ -11,7 +11,7 @@
   const portal = getPortal();
 
   export let open = false;
-  export let style: "error" = "error" as const;
+  export let style: "error" | "info" = "info";
 
   let anchor: HTMLDivElement;
   let target: { x: number; y: number } | undefined;
@@ -80,6 +80,7 @@
     top: 0;
     left: 0;
     transform-origin: bottom center;
+    filter: drop-shadow(0 1px 2px rgb(var(--rgb-black) / 0.25));
   }
 
   .tip-content-wrapper {
@@ -87,6 +88,7 @@
     left: 50%;
     bottom: 0;
     transform: translate(-50%, 0);
+    border-radius: var(--radius-xs);
   }
 
   .tip-content {
@@ -111,5 +113,11 @@
 
   .error {
     --tip-color: var(--rgb-danger);
+    color: rgb(var(--rgb-cloud));
+  }
+
+  .info {
+    --tip-color: var(--rgb-cloud);
+    color: rgb(var(--rgb-black));
   }
 </style>

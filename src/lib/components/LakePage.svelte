@@ -64,7 +64,9 @@
   }
 
   main {
-    width: 100vw;
+    container-type: inline-size;
+    width: calc(100vw - var(--32));
+    margin: 0 auto;
     max-width: var(--width-page);
     grid-row: safe-start / safe-end;
     grid-column: main-start / main-end;

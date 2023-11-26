@@ -14,8 +14,9 @@
   <div class="main">
     <div class="titles"><slot /></div>
     <search>
-      <Field icon={SearchIcon}>
+      <Field>
         <Input name="search" type="search" placeholder="Search" />
+        <SearchIcon slot="icon" />
       </Field>
     </search>
   </div>

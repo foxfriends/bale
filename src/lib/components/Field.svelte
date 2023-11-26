@@ -2,9 +2,9 @@
   import type { ComponentType } from "svelte";
   import Blinker from "./Blinker.svelte";
   import Tooltip from "./Tooltip.svelte";
+  import Tip from "./Tip.svelte";
 
   export let error: string | undefined | null = undefined;
-  export let icon: ComponentType | undefined = undefined;
 
   let tooltipOpen = true;
   $: tooltipOpen = !!error;
@@ -15,19 +15,19 @@
 
   {#if error}
     <div class="indicator">
-      <Tooltip bind:open={tooltipOpen}>
+      <Tooltip bind:open={tooltipOpen} style="error">
         <Blinker style="error" seen />
 
-        <div slot="tip" class="tip">
+        <Tip slot="tip">
           {error}
-        </div>
+        </Tip>
       </Tooltip>
     </div>
   {/if}
 
-  {#if icon}
+  {#if $$slots.icon}
     <div class="icon">
-      <svelte:component this={icon} />
+      <slot name="icon" />
     </div>
   {/if}
 </label>
@@ -48,17 +48,12 @@
     right: var(--4);
   }
 
-  .tip {
-    color: rgb(var(--rgb-cloud));
-    padding: var(--8);
-    font-weight: 500;
-  }
-
   .icon {
     display: flex;
     align-self: center;
     margin-right: var(--4);
     color: rgb(var(--rgb-black) / 0.6);
+    font-size: var(--24);
   }
 
   label:focus-within {
@@ -66,7 +61,7 @@
   }
 
   label:focus-within .icon {
-    color: color-mix(in srgb, rgb(var(--rgb-black)) 20%, rgb(var(--rgb-turtle) / 0.6));
+    color: color-mix(in srgb, rgb(var(--rgb-black)) 25%, rgb(var(--rgb-turtle)));
   }
 
   label :global(input) {
