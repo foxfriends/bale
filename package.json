@@ -39,7 +39,7 @@
   "type": "module",
   "dependencies": {
     "@prisma/client": "^5.6.0",
-    "bcrypt": "^5.1.1",
+    "bcrypt": "^6.0.0",
     "pino": "^8.16.2",
     "runtypes": "^6.7.0"
   }
